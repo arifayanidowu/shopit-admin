@@ -27,6 +27,7 @@ const AdminTable = () => {
       { field: "name", headerName: "Name", width: 130 },
       { field: "email", headerName: "Email", width: 200 },
       { field: "role", headerName: "Role", width: 130 },
+      { field: "active", headerName: "Active", width: 130 },
       {
         field: "createdAt",
         headerName: "Created At",
@@ -74,6 +75,11 @@ const AdminTable = () => {
         columns={columns}
         initialState={{
           pagination: { paginationModel: { pageSize: 5 } },
+          columns: {
+            columnVisibilityModel: {
+              id: false,
+            },
+          },
         }}
         pageSizeOptions={[5, 10, 25]}
         disableRowSelectionOnClick
