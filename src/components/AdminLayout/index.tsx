@@ -10,7 +10,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Avatar, Fab, Menu, MenuItem, SvgIcon, Tooltip } from "@mui/material";
 import {
   dividerStyle,
@@ -32,6 +32,7 @@ import { dashboardLinks, generalLinks } from "./links";
 
 export default function AdminLayout() {
   const theme = useTheme();
+  const location = useLocation();
   const { setAdminData, adminData } = useStore();
   const [open, setOpen] = React.useState(false);
   const { toggleColorMode } = React.useContext(ColorModeContext);
@@ -76,7 +77,7 @@ export default function AdminLayout() {
     setAnchorEl(null);
   };
 
-  const splittedName = adminData?.name.split(" ");
+  const splittedName = adminData?.name?.split(" ");
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -93,6 +94,7 @@ export default function AdminLayout() {
               width: 30,
               height: 20,
             }}
+            color="primary"
             size="small"
           >
             {theme.direction === "rtl" ? (
@@ -112,12 +114,19 @@ export default function AdminLayout() {
                 sx={{ display: "block", mt: 1 }}
               >
                 <ListItemButton
-                  sx={{
+                  sx={(theme) => ({
                     minHeight: 48,
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
                     mx: 1,
-                  }}
+                    bgcolor:
+                      location.pathname === item.href
+                        ? theme.palette.mode === "light"
+                          ? "rgba(0, 0, 0, 0.04)"
+                          : "rgba(225, 225, 225, 0.08)"
+                        : "transparent",
+                  })}
+                  onClick={() => navigate(item.href)}
                 >
                   <ListItemIcon
                     sx={{
@@ -186,7 +195,14 @@ export default function AdminLayout() {
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
                     mx: 1,
+                    bgcolor:
+                      location.pathname === item.href
+                        ? theme.palette.mode === "light"
+                          ? "rgba(0, 0, 0, 0.04)"
+                          : "rgba(225, 225, 225, 0.08)"
+                        : "transparent",
                   }}
+                  onClick={() => navigate(item.href)}
                 >
                   <ListItemIcon
                     sx={{
@@ -270,10 +286,8 @@ export default function AdminLayout() {
             />
           </ListItemButton>
         </Box>
-        {/* </List> */}
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3, pt: 1 }}>
-        <DrawerHeader />
+      <Box component="main" sx={{ flexGrow: 1, p: 3, overflow: "hidden" }}>
         <Outlet />
       </Box>
     </Box>

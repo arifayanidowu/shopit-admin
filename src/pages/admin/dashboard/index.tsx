@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useStore } from "../../../store";
+import ProductTable from "../ProductTable";
 
 const Dashboard = () => {
   const { adminData } = useStore();
@@ -60,6 +61,7 @@ const Dashboard = () => {
                     size="small"
                     color="error"
                     icon={<ArrowDownward />}
+                    variant="outlined"
                   />
                 </Stack>
                 <Typography variant="h2">3999.2k</Typography>
@@ -148,13 +150,12 @@ const Dashboard = () => {
           </Typography>
           <Box
             sx={{
-              bgcolor: "#ffb6c3",
               height: "60vh",
               overflowY: "scroll",
               p: 1,
             }}
           >
-            <Typography>Order 1</Typography>
+            <ProductTable />
           </Box>
         </Grid>
       </Grid>

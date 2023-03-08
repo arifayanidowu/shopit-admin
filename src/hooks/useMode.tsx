@@ -30,7 +30,7 @@ const useMode = () => {
             main: "#681e51",
           },
           background: {
-            default: mode === "light" ? "#fefefe" : "#181826",
+            default: mode === "light" ? "#f4f4f4" : "#181826",
           },
         },
         components: {
@@ -95,6 +95,18 @@ const useMode = () => {
               },
             },
           },
+          MuiPaper: {
+            styleOverrides: {
+              root: {
+                borderRadius: 0,
+                backgroundColor: mode === "light" ? "#fff" : "#1f2228",
+                border: `1px solid ${mode === "light" ? "#e0e0e0" : "#515151"}`,
+              },
+            },
+            defaultProps: {
+              elevation: 0,
+            },
+          },
           MuiCard: {
             styleOverrides: {
               root: {
@@ -119,6 +131,14 @@ const useMode = () => {
           MuiDialog: {
             styleOverrides: {
               paper: {
+                fontFamily: "Abel",
+              },
+            },
+          },
+
+          MuiTableCell: {
+            styleOverrides: {
+              root: {
                 fontFamily: "Abel",
               },
             },

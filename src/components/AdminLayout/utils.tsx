@@ -95,7 +95,7 @@ export const PaperProps = () => ({
       bottom: 14,
       width: 10,
       height: 10,
-      bgcolor: "background.paper",
+      bgcolor: theme.palette.mode === "light" ? "background.paper" : "#1f2228",
       transform: "translateY(-50%) rotate(45deg)",
       zIndex: 0,
       [theme.breakpoints.down("sm")]: {

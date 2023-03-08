@@ -6,6 +6,7 @@ import {
 import AdminLayout from "../components/AdminLayout";
 import ErrorBoundary from "../components/ErrorBoundary";
 import Dashboard from "../pages/admin/dashboard";
+import Settings from "../pages/admin/settings";
 import AuthCallback from "../pages/auth/callback";
 import EmailVerify from "../pages/auth/emailVerify";
 import Login from "../pages/login";
@@ -28,6 +29,11 @@ const router = createBrowserRouter(
         <Route
           path="dashboard"
           element={<Dashboard />}
+          errorElement={<ErrorBoundary />}
+        />
+        <Route
+          path="settings"
+          element={<Settings />}
           errorElement={<ErrorBoundary />}
         />
       </Route>

@@ -22,42 +22,42 @@ export const generalLinks = () => {
     {
       icon: <SvgIcon component={BrandSvg} inheritViewBox />,
       label: "Brand",
-      href: "/brand",
+      href: "/admin/brand",
     },
     {
       icon: <SvgIcon component={CategoryIcon} inheritViewBox />,
       label: "Category",
-      href: "/category",
+      href: "/admin/category",
     },
     {
       icon: <SvgIcon component={ProdSvg} inheritViewBox />,
       label: "Product",
-      href: "/product",
+      href: "/admin/product",
     },
     {
       icon: <SvgIcon component={CustomerSvg} inheritViewBox />,
       label: "Customer",
-      href: "/customer",
+      href: "/admin/customer",
     },
     {
       icon: <SvgIcon component={InvoiceIcon} inheritViewBox />,
       label: "Invoice",
-      href: "/invoice",
+      href: "/admin/invoice",
     },
     {
       icon: <SvgIcon component={OrderIcon} inheritViewBox />,
       label: "Order",
-      href: "/order",
+      href: "/admin/order",
     },
     {
       icon: <SvgIcon component={PromoIcon} inheritViewBox />,
       label: "Promotion",
-      href: "/promotion",
+      href: "/admin/promotion",
     },
     {
       icon: <SvgIcon component={SettingIcons} inheritViewBox />,
       label: "Settings",
-      href: "/settings",
+      href: "/admin/settings",
     },
   ];
 };

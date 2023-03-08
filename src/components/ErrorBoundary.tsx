@@ -45,6 +45,9 @@ function ErrorBoundary() {
           sx={{ mt: 2 }}
           variant="contained"
           disableElevation
+          onClick={() => {
+            window.history.back();
+          }}
         >
           Go Back
         </Button>
