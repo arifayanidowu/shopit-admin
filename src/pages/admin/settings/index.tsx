@@ -64,7 +64,7 @@ const Settings = () => {
             <Paper
               square
               sx={{
-                height: 200,
+                height: "fit-content",
                 maxHeight: 200,
                 overflowY: "auto",
               }}

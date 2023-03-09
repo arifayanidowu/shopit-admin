@@ -1,5 +1,6 @@
 import { CSSObject, styled, Theme } from "@mui/material";
 import MuiDrawer from "@mui/material/Drawer";
+import type { Location } from "react-router-dom";
 
 export const drawerWidth = 240;
 
@@ -69,17 +70,29 @@ export const dividerStyle = (open: boolean = false): CSSObject => ({
   transition: "all 0.6s ease-in-out",
   transitionDelay: "0.3s",
 });
+export const lisItemStyle = (
+  theme: Theme,
+  open: boolean = false,
+  location?: Location,
+  item?: any
+): CSSObject => ({
+  minHeight: 48,
+  justifyContent: open ? "initial" : "center",
+  px: 2.5,
+  mx: 1,
+  bgcolor:
+    location?.pathname === item.href
+      ? theme.palette.mode === "light"
+        ? "rgba(0, 0, 0, 0.04)"
+        : "rgba(225, 225, 225, 0.08)"
+      : "transparent",
+});
 
 export const PaperProps = () => ({
-  elevation: 0,
   sx: (theme: Theme) => ({
     overflow: "visible",
-    borderRadius: 0,
-    px: 0.5,
-    filter: "drop-shadow(0px 2px 5px rgba(0,0,0,0.32))",
+    width: drawerWidth / 1.5,
     mt: 1.5,
-    minWidth: 150,
-    ml: 8,
     "& .MuiAvatar-root": {
       width: 32,
       height: 32,
@@ -90,17 +103,19 @@ export const PaperProps = () => ({
       content: '""',
       display: "block",
       position: "absolute",
-      top: "45%",
-      left: -4,
-      bottom: 14,
+      top: 0,
+      right: 14,
       width: 10,
       height: 10,
       bgcolor: theme.palette.mode === "light" ? "background.paper" : "#1f2228",
+      borderTop: `1px solid ${
+        theme.palette.mode === "light" ? "#e0e0e0" : "#515151"
+      }`,
+      borderLeft: `1px solid ${
+        theme.palette.mode === "light" ? "#e0e0e0" : "#515151"
+      }`,
       transform: "translateY(-50%) rotate(45deg)",
       zIndex: 0,
-      [theme.breakpoints.down("sm")]: {
-        top: "85%",
-      },
     },
   }),
 });

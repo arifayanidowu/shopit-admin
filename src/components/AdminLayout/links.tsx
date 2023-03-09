@@ -36,7 +36,7 @@ export const generalLinks = () => {
     },
     {
       icon: <SvgIcon component={CustomerSvg} inheritViewBox />,
-      label: "Customer",
+      label: "Customers",
       href: "/admin/customer",
     },
     {

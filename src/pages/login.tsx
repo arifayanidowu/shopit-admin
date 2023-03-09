@@ -24,13 +24,13 @@ const Login = () => {
   const { setAdminData } = useStore();
   const [email, setEmail] = useState("");
   let toastId: Id;
+  const token = localStorage.getItem("auth_token");
 
   useEffect(() => {
-    const token = localStorage.getItem("auth_token");
     if (token) {
       navigate("/admin/dashboard");
     }
-  }, [navigate]);
+  }, [navigate, token]);
 
   const { mutate, isLoading } = useMutation(authLogin, {
     onSuccess: (data) => {

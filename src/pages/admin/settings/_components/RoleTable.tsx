@@ -1,4 +1,4 @@
-import { Paper, Typography, useMediaQuery } from "@mui/material";
+import { Typography, useMediaQuery } from "@mui/material";
 import { DataGrid, GridColumnHeaders, GridRow } from "@mui/x-data-grid";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
@@ -29,24 +29,24 @@ const RoleTable = () => {
         id: 1,
         name: "Author",
         description: "Authors can manage only contents they create",
-        users: data?.authors,
+        users: isLoading ? "loading..." : data?.authors,
       },
       {
         id: 2,
         name: "Editor",
         description:
           "Editors can manage and publish contents including those of other admins.",
-        users: data?.editors,
+        users: isLoading ? "loading..." : data?.editors,
       },
       {
         id: 3,
         name: "SuperAdmin",
         description:
           "SuperAdmin's can access and manage all features and settings.",
-        users: data?.superAdmins,
+        users: isLoading ? "loading..." : data?.superAdmins,
       },
     ],
-    [data?.authors, data?.editors, data?.superAdmins]
+    [data?.authors, data?.editors, data?.superAdmins, isLoading]
   );
 
   const columns = useMemo(
@@ -56,12 +56,9 @@ const RoleTable = () => {
         field: "name",
         headerName: "Name",
         minWidth: 150,
-        // maxWidth: 200,
-        // width: 300,
         sortable: false,
         filterable: false,
         flex: 1,
-        // flexGrow: matches ? 1 : 0,
       },
       {
         field: "description",
@@ -82,7 +79,6 @@ const RoleTable = () => {
         sortable: false,
         filterable: false,
         flex: 1,
-        // flexGrow: matches ? 1 : 0,
       },
     ],
     [matches]
@@ -102,31 +98,31 @@ const RoleTable = () => {
     >
       <Typography variant="h3">Roles</Typography>
       <Typography>List of roles</Typography>
-      <Paper sx={{ width: "fit-content", minWidth: 300 }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          slots={{
-            noRowsOverlay: () => <Typography>No roles found</Typography>,
-            row: MemoizedRow,
-            columnHeaders: MemoizedColumnHeaders,
-          }}
-          sx={(theme) => ({
-            bgcolor:
-              theme.palette.mode === "light" ? "background.paper" : "#1f2228",
-            width: "fit-content",
-            borderRadius: 0,
-          })}
-          initialState={{
-            pagination: { paginationModel: { pageSize: 5 } },
-          }}
-          pageSizeOptions={[5, 10, 25]}
-          disableRowSelectionOnClick
-          autoHeight
-          disableColumnMenu
-          loading={isLoading}
-        />
-      </Paper>
+
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        slots={{
+          noRowsOverlay: () => <Typography>No roles found</Typography>,
+          row: MemoizedRow,
+          columnHeaders: MemoizedColumnHeaders,
+        }}
+        sx={(theme) => ({
+          bgcolor:
+            theme.palette.mode === "light" ? "background.paper" : "#1f2228",
+          width: "100%",
+          borderRadius: 0,
+          fontFamily: "Abel",
+        })}
+        initialState={{
+          pagination: { paginationModel: { pageSize: 5 } },
+        }}
+        pageSizeOptions={[5, 10, 25]}
+        disableRowSelectionOnClick
+        autoHeight
+        disableColumnMenu
+        loading={isLoading}
+      />
     </motion.div>
   );
 };

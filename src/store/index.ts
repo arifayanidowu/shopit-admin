@@ -1,5 +1,28 @@
 import { create } from "zustand";
-import { devtools, persist, createJSONStorage } from "zustand/middleware";
+import {
+  devtools,
+  persist,
+  createJSONStorage,
+  StateStorage,
+} from "zustand/middleware";
+
+const hashStorage: StateStorage = {
+  getItem: (key): string => {
+    const searchParams = new URLSearchParams(window.location.hash.slice(1));
+    const storedValue = searchParams.get(key)!;
+    return JSON.parse(storedValue);
+  },
+  setItem: (key, newValue): void => {
+    const searchParams = new URLSearchParams(window.location.hash.slice(1));
+    searchParams.set(key, JSON.stringify(newValue));
+    window.location.hash = searchParams.toString();
+  },
+  removeItem: (key): void => {
+    const searchParams = new URLSearchParams(window.location.hash.slice(1));
+    searchParams.delete(key);
+    window.location.hash = searchParams.toString();
+  },
+};
 
 export interface State {
   adminData: any;
@@ -48,7 +71,10 @@ export const useStore = create<State & StoreActions>()(
           );
         },
       }),
-      { name: "shopit", storage: createJSONStorage(() => localStorage) }
+      {
+        name: "shopit",
+        storage: createJSONStorage(() => hashStorage),
+      }
     )
   )
 );
