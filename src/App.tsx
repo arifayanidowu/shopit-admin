@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Box, Button, CssBaseline, ThemeProvider } from "@mui/material";
 import { RouterProvider } from "react-router-dom";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -7,7 +7,6 @@ import { ErrorBoundary } from "react-error-boundary";
 import { ToastContainer } from "react-toastify";
 import useMode from "./hooks/useMode";
 import router from "./routes/router";
-import { useStore } from "./store";
 
 export const ColorModeContext = React.createContext({
   toggleColorMode: () => {},
@@ -16,11 +15,6 @@ export const ColorModeContext = React.createContext({
 function App() {
   const { reset } = useQueryErrorResetBoundary();
   const { colorMode, memoizedTheme } = useMode();
-  const { setPageHistory } = useStore();
-
-  useEffect(() => {
-    setPageHistory(router.state.location);
-  }, [setPageHistory]);
 
   return (
     <ErrorBoundary

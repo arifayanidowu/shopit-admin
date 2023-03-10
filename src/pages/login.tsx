@@ -10,16 +10,14 @@ import {
   useTheme,
 } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Id, toast } from "react-toastify";
-import { ColorModeContext } from "../App";
 import { authLogin } from "../endpoints/authLogin";
 import { useStore } from "../store";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { toggleColorMode } = useContext(ColorModeContext);
   const theme = useTheme();
   const { setAdminData } = useStore();
   const [email, setEmail] = useState("");
@@ -158,9 +156,6 @@ const Login = () => {
                   </Button>
                 </Box>
               </form>
-              <Button onClick={toggleColorMode} color="inherit">
-                Toggle color mode
-              </Button>
             </Box>
           </CardContent>
         </Card>

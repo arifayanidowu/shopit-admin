@@ -1,6 +1,8 @@
 import { createTheme, PaletteMode } from "@mui/material";
 import React from "react";
 
+const fontFamily = "Abel, sans-serif";
+
 const useMode = () => {
   const [mode, setMode] = React.useState<PaletteMode>(
     "light" ?? (localStorage.getItem("app-color-mode") as PaletteMode)
@@ -37,6 +39,7 @@ const useMode = () => {
           MuiButtonBase: {
             styleOverrides: {
               root: {
+                fontFamily,
                 textTransform: "none",
                 borderRadius: "0px",
               },
@@ -45,16 +48,22 @@ const useMode = () => {
           MuiTypography: {
             styleOverrides: {
               root: {
-                fontFamily: "Abel",
+                fontFamily,
               },
             },
           },
           MuiButton: {
             styleOverrides: {
+              disableElevation: {
+                boxShadow: "none",
+              },
               root: {
+                fontFamily,
                 textTransform: "none",
                 borderRadius: "0px",
-
+                border: `0.5px solid ${
+                  mode === "light" ? "#e0e0e0" : "#515151"
+                }`,
                 "&:hover": {
                   transform: "translateY(-2px)",
                   transition: "transform 0.2s ease-in-out",
@@ -73,6 +82,7 @@ const useMode = () => {
           MuiInputBase: {
             styleOverrides: {
               root: {
+                fontFamily,
                 "&.MuiOutlinedInput-root": {
                   borderRadius: "0px",
                   "& fieldset": {
@@ -84,6 +94,17 @@ const useMode = () => {
                   "&.Mui-focused fieldset": {
                     borderColor: mode === "light" ? "#000" : "#fff",
                   },
+                },
+              },
+            },
+          },
+          MuiFormLabel: {
+            styleOverrides: {
+              root: {
+                fontFamily,
+                color: mode === "light" ? "#000" : "#fff",
+                "&.Mui-focused": {
+                  color: mode === "light" ? "#000" : "#fff",
                 },
               },
             },
@@ -117,21 +138,21 @@ const useMode = () => {
           MuiInputLabel: {
             styleOverrides: {
               root: {
-                fontFamily: "Abel",
+                fontFamily,
               },
             },
           },
           MuiMenuItem: {
             styleOverrides: {
               root: {
-                fontFamily: "Abel",
+                fontFamily,
               },
             },
           },
           MuiDialog: {
             styleOverrides: {
               paper: {
-                fontFamily: "Abel",
+                fontFamily,
               },
             },
           },
@@ -139,7 +160,27 @@ const useMode = () => {
           MuiTableCell: {
             styleOverrides: {
               root: {
-                fontFamily: "Abel",
+                fontFamily,
+              },
+            },
+          },
+          MuiTextField: {
+            styleOverrides: {
+              root: {
+                fontFamily,
+              },
+            },
+          },
+          MuiTablePagination: {
+            styleOverrides: {
+              root: {
+                fontFamily,
+              },
+              selectLabel: {
+                fontFamily,
+              },
+              displayedRows: {
+                fontFamily,
               },
             },
           },

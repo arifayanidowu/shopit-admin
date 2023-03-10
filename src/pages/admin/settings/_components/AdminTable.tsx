@@ -1,13 +1,18 @@
-import { Button, Grid, Typography } from "@mui/material";
-import { GridValueFormatterParams } from "@mui/x-data-grid";
-import { DataGrid } from "@mui/x-data-grid";
+import { Button, Grid, Switch, Typography } from "@mui/material";
+import {
+  GridValueFormatterParams,
+  GridRenderCellParams,
+  DataGrid,
+} from "@mui/x-data-grid";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { getAllAdmins } from "../../../../endpoints/admins";
 import { useStore } from "src/store";
+import AddUserModal from "./AddUserModal";
+import DeleteAdmin from "./DeleteAdmin";
 
 type IData = {
   id: string;
@@ -21,6 +26,8 @@ type IData = {
 
 const AdminTable = () => {
   const { adminData } = useStore();
+  const [openModal, setOpenModal] = useState(false);
+
   const { data, isLoading, error, isError } = useQuery<IData[]>(
     ["admins"],
     getAllAdmins
@@ -56,11 +63,25 @@ const AdminTable = () => {
         editable:
           (adminData.role === "SuperAdmin" || adminData.role === "Editor") &&
           true,
+        disableClickEventBubbling: true,
+        renderCell: (params: GridRenderCellParams<IData>) => (
+          <Switch
+            checked={params.row.active as boolean}
+            onChange={(e) => {
+              console.log({ e, params });
+              params.row.active = e.target.checked;
+              params.value = e.target.checked;
+            }}
+            color="secondary"
+          />
+        ),
       },
       {
         field: "createdAt",
         headerName: "Created At",
         width: 250,
+        type: "dateTime",
+        editable: true,
         valueFormatter: (params: GridValueFormatterParams<Date>) => {
           if (params.value == null) {
             return "";
@@ -79,6 +100,14 @@ const AdminTable = () => {
           return moment(params.value as Date).format("MMMM Do YYYY, h:mm:ss A");
         },
       },
+      {
+        field: "actions",
+        headerName: "Actions",
+        width: 130,
+        renderCell: (params: GridRenderCellParams<IData>) => (
+          <DeleteAdmin id={params.row.id} />
+        ),
+      },
     ],
     [adminData.role]
   );
@@ -92,25 +121,36 @@ const AdminTable = () => {
     () => data?.filter((item) => item.id !== adminData.id) ?? [],
     [data, adminData.id]
   );
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+
   return (
     <motion.div
       style={{
-        height: "50vh",
         position: "relative",
         width: "100%",
         overflowX: "scroll" as const,
       }}
       key="user"
-      initial={{ opacity: 0, x: -2 }}
+      initial={{ opacity: 0, x: -10 }}
       animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -2 }}
+      exit={{ opacity: 0, x: 10 }}
+      transition={{ duration: 0.2, easings: ["easeIn", "easeInOut"] }}
     >
+      <AddUserModal open={openModal} handleClose={handleCloseModal} />
       <Grid container justifyContent="space-between" alignItems="center">
         <Grid item>
           <Typography variant="h3">Admins</Typography>
         </Grid>
         <Grid item>
-          <Button variant="contained" color="primary">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setOpenModal(true)}
+            disableElevation
+          >
             Add new user
           </Button>
         </Grid>
@@ -147,6 +187,9 @@ const AdminTable = () => {
           width: "100%",
           borderRadius: 0,
           fontFamily: "Abel",
+          "& .MuiDataGrid-row": {
+            overflowY: "scroll" as const,
+          },
         })}
       />
     </motion.div>

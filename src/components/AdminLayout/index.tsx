@@ -39,12 +39,13 @@ import { useStore } from "../../store";
 import { ColorModeContext } from "../../App";
 import { dashboardLinks, generalLinks } from "./links";
 import PopupMenu from "./PopupMenu";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function AdminLayout() {
   const theme = useTheme();
   const location = useLocation();
   const matches = useMediaQuery("(min-width:700px)");
-  const { setAdminData, adminData } = useStore();
+  const { setAdminData, adminData, resetState } = useStore();
   const [open, setOpen] = React.useState(false);
   const [openDropdown, setOpenDropdown] = React.useState(false);
   const { toggleColorMode } = React.useContext(ColorModeContext);
@@ -64,9 +65,9 @@ export default function AdminLayout() {
 
   React.useEffect(() => {
     if (!token) {
-      navigate("/");
+      logout(navigate, resetState);
     }
-  }, [token, navigate]);
+  }, [token, navigate, resetState]);
 
   React.useEffect(() => {
     if (data) {
@@ -90,8 +91,8 @@ export default function AdminLayout() {
   }, [error]);
 
   React.useEffect(() => {
-    if (!isLoading && isError) logout(navigate);
-  }, [isError, navigate, isLoading]);
+    if (!isLoading && isError) logout(navigate, resetState);
+  }, [isError, navigate, isLoading, resetState]);
 
   const handleDrawerClose = () => {
     setOpen((prev) => !prev);
@@ -105,6 +106,28 @@ export default function AdminLayout() {
   };
 
   const splittedName = adminData?.name?.split(" ");
+
+  const variants = {
+    open: {
+      transition: { staggerChildren: 0.07, delayChildren: 0.2 },
+    },
+    closed: {
+      transition: { staggerChildren: 0.05, staggerDirection: -1 },
+    },
+  };
+
+  const itemVariants = {
+    open: {
+      x: 0,
+      opacity: 1,
+      transition: { ease: "easeOut", duration: 2 },
+    },
+    closed: {
+      x: 50,
+      opacity: 0,
+      transition: { ease: "easeOut", duration: 2 },
+    },
+  };
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -208,36 +231,43 @@ export default function AdminLayout() {
               </ListSubheader>
             }
           >
-            <Collapse in={openDropdown} timeout="auto" unmountOnExit>
-              {generalLinks().map((item) => (
-                <ListItem
-                  key={item.label}
-                  disablePadding
-                  sx={{ display: "block" }}
-                >
-                  <ListItemButton
-                    sx={(theme) => ({
-                      ...lisItemStyle(theme, open, location, item),
-                    })}
-                    onClick={() => navigate(item.href)}
-                  >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: 0,
-                        // mr: open ? 3 : "auto",
-                        justifyContent: "center",
-                      }}
-                    >
-                      {item.icon}
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={item.label}
-                      sx={{ ...styledList(open) }}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </Collapse>
+            <motion.div
+              initial={false}
+              animate={openDropdown ? "open" : "closed"}
+            >
+              <Collapse in={openDropdown} timeout="auto" unmountOnExit>
+                <motion.div variants={variants}>
+                  <AnimatePresence mode="sync">
+                    {generalLinks().map((item) => (
+                      <motion.div key={item.label} variants={itemVariants}>
+                        <ListItem disablePadding sx={{ display: "block" }}>
+                          <ListItemButton
+                            sx={(theme) => ({
+                              ...lisItemStyle(theme, open, location, item),
+                            })}
+                            onClick={() => navigate(item.href)}
+                          >
+                            <ListItemIcon
+                              sx={{
+                                minWidth: 0,
+                                // mr: open ? 3 : "auto",
+                                justifyContent: "center",
+                              }}
+                            >
+                              {item.icon}
+                            </ListItemIcon>
+                            <ListItemText
+                              primary={item.label}
+                              sx={{ ...styledList(open) }}
+                            />
+                          </ListItemButton>
+                        </ListItem>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </motion.div>
+              </Collapse>
+            </motion.div>
           </List>
         </Box>
       </Drawer>
@@ -252,10 +282,7 @@ export default function AdminLayout() {
                 sx={{ mr: 2 }}
                 onClick={handleClick}
               >
-                <Avatar
-                  src={adminData?.avatar}
-                  sx={{ width: 24, height: 24, p: 2 }}
-                >
+                <Avatar src={adminData?.avatar} sx={{ p: 2 }}>
                   <Typography sx={{ fontSize: "0.8rem" }} color="primary">
                     {splittedName?.[0][0]}
                     {splittedName?.[1][0]}
@@ -271,6 +298,7 @@ export default function AdminLayout() {
                   toggleColorMode,
                   logout,
                   navigate,
+                  resetState,
                 }}
               />
             </Box>

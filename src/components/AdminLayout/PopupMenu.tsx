@@ -7,7 +7,8 @@ interface PopupMenuProps {
   openMenu: boolean;
   handleClose: () => void;
   toggleColorMode: () => void;
-  logout: (navigate: any) => void;
+  logout: (navigate: any, resetState: () => void) => void;
+  resetState: () => void;
   navigate: any;
 }
 
@@ -17,6 +18,7 @@ const PopupMenu = ({
   handleClose,
   toggleColorMode,
   logout,
+  resetState,
   navigate,
 }: PopupMenuProps) => {
   return (
@@ -37,7 +39,7 @@ const PopupMenu = ({
       <MenuItem onClick={handleClose}>Profile</MenuItem>
       <MenuItem onClick={toggleColorMode}>Toggle Theme</MenuItem>
       <MenuItem
-        onClick={() => logout(navigate)}
+        onClick={() => logout(navigate, resetState)}
         sx={{ justifyContent: "space-between", color: "error.main" }}
       >
         Logout
