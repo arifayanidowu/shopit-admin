@@ -59,6 +59,7 @@ const useMode = () => {
               },
               root: {
                 fontFamily,
+                fontWeight: 600,
                 textTransform: "none",
                 borderRadius: "0px",
                 border: `0.5px solid ${
@@ -68,6 +69,7 @@ const useMode = () => {
                   transform: "translateY(-2px)",
                   transition: "transform 0.2s ease-in-out",
                 },
+                boxShadow: "none",
               },
             },
           },

@@ -1,3 +1,5 @@
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Grid, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -16,8 +18,6 @@ const Admin = () => {
       style={{
         position: "relative",
         width: "100%",
-        // overflowX: "scroll" as const,
-        // overflowY: "hidden" as const,
       }}
       key="user"
       initial={{ opacity: 0, x: -10 }}
@@ -37,12 +37,19 @@ const Admin = () => {
             color="primary"
             onClick={() => setOpenModal(true)}
             disableElevation
+            startIcon={
+              <FontAwesomeIcon
+                icon={faPlus}
+                style={{
+                  fontSize: "1rem",
+                }}
+              />
+            }
           >
             Add new user
           </Button>
         </Grid>
       </Grid>
-      <Typography>List of admins</Typography>
       <AdminTable />
     </motion.div>
   );

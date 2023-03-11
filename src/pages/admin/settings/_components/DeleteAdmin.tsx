@@ -69,7 +69,7 @@ const DeleteAdmin = ({ id }: IDeleteAdminProps) => {
         }}
         color="error"
       >
-        <Delete color="error" />
+        <Delete color="inherit" />
       </IconButton>
     </>
   );

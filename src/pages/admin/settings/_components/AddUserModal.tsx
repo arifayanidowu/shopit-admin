@@ -129,6 +129,7 @@ const AddUserModal = ({
             color="primary"
             size="large"
             endIcon={isLoading && <CircularProgress />}
+            disableElevation
           >
             {isLoading ? "Loading..." : "Add New User"}
           </Button>

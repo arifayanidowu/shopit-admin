@@ -3,6 +3,7 @@ import { Id, toast } from "react-toastify";
 import {
   GridValueFormatterParams,
   GridRenderCellParams,
+  GridRowSelectionModel,
 } from "@mui/x-data-grid";
 import moment from "moment";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -25,13 +26,14 @@ const useMutate = () => {
   const queryClient = useQueryClient();
   const toastId = useRef<Id | null>(null);
   const [updatedArguments, setUpdatedArguments] = useState<any>(null);
+  const [entries, setEntries] = useState<GridRowSelectionModel>([]);
 
   const { data, isLoading, error, isError } = useQuery<IData[]>(
     ["admins"],
     getAllAdmins
   );
 
-  const { mutate } = useMutation({
+  const { mutateAsync, isError: mutateError } = useMutation({
     mutationFn: updateAdmin,
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -58,6 +60,7 @@ const useMutate = () => {
         closeOnClick: true,
         closeButton: true,
       });
+
       setTimeout(() => {
         toast.dismiss(toastId.current as Id);
       }, 2000);
@@ -74,8 +77,20 @@ const useMutate = () => {
   const columns = useMemo(
     () => [
       { field: "id", headerName: "ID", width: 130, hide: true },
-      { field: "name", headerName: "Name", width: 130 },
-      { field: "email", headerName: "Email", width: 200 },
+      {
+        field: "name",
+        headerName: "Name",
+        width: 130,
+        filterable: false,
+        sortable: false,
+      },
+      {
+        field: "email",
+        headerName: "Email",
+        width: 200,
+        filterable: false,
+        sortable: false,
+      },
       {
         field: "role",
         headerName: "Role",
@@ -91,6 +106,8 @@ const useMutate = () => {
         headerName: "Active",
         width: 130,
         type: "boolean",
+        filterable: false,
+        sortable: false,
         editable:
           (adminData.role === "SuperAdmin" || adminData.role === "Editor") &&
           true,
@@ -122,6 +139,8 @@ const useMutate = () => {
         field: "actions",
         headerName: "Actions",
         width: 130,
+        filterable: false,
+        sortable: false,
         renderCell: (params: GridRenderCellParams<IData>) => (
           <DeleteAdmin id={params.row.id} />
         ),
@@ -144,6 +163,9 @@ const useMutate = () => {
     (newRow: IData, oldRow: IData): Promise<IData> => {
       return new Promise((resolve, reject) => {
         const mutation = computeMutation(newRow, oldRow);
+        if (mutateError) {
+          resolve(oldRow);
+        }
         if (mutation) {
           // Save the arguments to resolve or reject the promise later
           setUpdatedArguments({ resolve, reject, newRow, oldRow });
@@ -152,16 +174,22 @@ const useMutate = () => {
         }
       });
     },
-    [computeMutation]
+    [computeMutation, mutateError]
   );
 
-  const handleConfirm = useCallback(() => {
-    const { resolve, newRow } = updatedArguments;
+  const handleConfirm = useCallback(async () => {
+    const { resolve, newRow, oldRow } = updatedArguments;
     toastId.current = toast.loading("Updating admin...");
-    mutate(newRow);
-    setUpdatedArguments(null);
-    resolve(newRow);
-  }, [updatedArguments, setUpdatedArguments, mutate]);
+    mutateAsync(newRow)
+      .then(() => {
+        setUpdatedArguments(null);
+        resolve(newRow);
+      })
+      .catch((error) => {
+        setUpdatedArguments(null);
+        resolve(oldRow);
+      });
+  }, [updatedArguments, mutateAsync, setUpdatedArguments]);
 
   const handleClose = useCallback(() => {
     const { reject, oldRow } = updatedArguments;
@@ -174,11 +202,27 @@ const useMutate = () => {
     [data, adminData.id]
   );
 
+  const entriesText = useMemo(() => {
+    return `${entries.length} entries selected`;
+  }, [entries]);
+
+  const handleOnProcessRowUpdateError = useCallback(
+    (error: any) => {
+      if (error && updatedArguments) {
+        const { reject, oldRow } = updatedArguments;
+        if (Object.is(error, oldRow)) {
+          reject(error);
+          setUpdatedArguments(null);
+        }
+      }
+    },
+    [updatedArguments]
+  );
+
   return {
     computeMutation,
     processRowUpdate,
     updatedArguments,
-    mutate,
     rows,
     columns,
     isLoading,
@@ -187,6 +231,10 @@ const useMutate = () => {
     setUpdatedArguments,
     handleConfirm,
     handleClose,
+    handleOnProcessRowUpdateError,
+    setEntries,
+    entriesText,
+    entries,
   };
 };
 

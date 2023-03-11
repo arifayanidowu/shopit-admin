@@ -238,9 +238,16 @@ export default function AdminLayout() {
               <Collapse in={openDropdown} timeout="auto" unmountOnExit>
                 <motion.div variants={variants}>
                   <AnimatePresence mode="sync">
-                    {generalLinks().map((item) => (
-                      <motion.div key={item.label} variants={itemVariants}>
-                        <ListItem disablePadding sx={{ display: "block" }}>
+                    <motion.div
+                      key={"show-" + openDropdown}
+                      variants={itemVariants}
+                    >
+                      {generalLinks().map((item) => (
+                        <ListItem
+                          disablePadding
+                          sx={{ display: "block" }}
+                          key={item.label}
+                        >
                           <ListItemButton
                             sx={(theme) => ({
                               ...lisItemStyle(theme, open, location, item),
@@ -262,8 +269,8 @@ export default function AdminLayout() {
                             />
                           </ListItemButton>
                         </ListItem>
-                      </motion.div>
-                    ))}
+                      ))}
+                    </motion.div>
                   </AnimatePresence>
                 </motion.div>
               </Collapse>
