@@ -10,8 +10,8 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import AdminTable from "./_components/AdminTable";
 import RoleTable from "./_components/RoleTable";
+import Admin from "./_components/admin";
 
 const Settings = () => {
   const [showView, setShowView] = useState<"role" | "user">("role");
@@ -111,7 +111,7 @@ const Settings = () => {
           </Grid>
           <Grid item xs={12} md={10} sx={{ width: "100%", overflow: "hidden" }}>
             <AnimatePresence mode="wait">
-              {showView === "role" ? <RoleTable /> : <AdminTable />}
+              {showView === "role" ? <RoleTable /> : <Admin />}
             </AnimatePresence>
           </Grid>
         </Grid>

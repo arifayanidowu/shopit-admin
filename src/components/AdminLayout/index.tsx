@@ -276,7 +276,16 @@ export default function AdminLayout() {
         <AppBar elevation={0} position="fixed" color="inherit">
           <Toolbar>
             <Toolbar sx={{ mr: "auto" }} />
-            <Box>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Typography noWrap component="p" sx={{ fontSize: "0.9rem" }}>
+                {adminData?.name}
+              </Typography>
               <IconButton
                 aria-label="User's Avatar"
                 sx={{ mr: 2 }}

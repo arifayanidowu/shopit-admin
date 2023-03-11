@@ -8,10 +8,9 @@ function ErrorBoundary() {
     <Box
       sx={{
         display: "flex",
-        justifyContent: "center",
         alignItems: "center",
-        height: "100vh",
         flexDirection: "column",
+        py: 10,
       }}
     >
       <Box sx={{ textAlign: "center" }}>
@@ -27,11 +26,13 @@ function ErrorBoundary() {
         ) : (
           <img
             src="/vector_art.jpeg"
-            alt="404"
+            alt="vector art"
             style={{
               borderRadius: "100%",
               margin: "auto",
             }}
+            width="200"
+            height={200}
           />
         )}
         <Typography variant="h4">Oops</Typography>

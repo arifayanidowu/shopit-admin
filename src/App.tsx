@@ -15,7 +15,6 @@ export const ColorModeContext = React.createContext({
 function App() {
   const { reset } = useQueryErrorResetBoundary();
   const { colorMode, memoizedTheme } = useMode();
-
   return (
     <ErrorBoundary
       onReset={reset}
