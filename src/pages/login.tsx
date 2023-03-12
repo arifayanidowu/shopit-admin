@@ -71,39 +71,36 @@ const Login = () => {
           margin: "60px",
         }}
       >
-        <Link
+
+        <Typography
+          align="center"
+          variant="h6"
           to="/"
-          style={{
-            textDecoration: "none",
+          sx={{
+            textDecoration: "underline",
+            width: "fit-content",
+            mx: "auto",
             color: "inherit",
+            display: 'block'
           }}
+          component={Link}
         >
           <Typography
-            align="center"
-            variant="h6"
             sx={{
-              textDecoration: "underline",
-              width: "fit-content",
-              mx: "auto",
+              bgcolor: theme.palette.mode === "dark" ? "#fff" : "#000",
+              color: theme.palette.mode === "dark" ? "#000" : "#fff",
+              fontSize: 16,
+              p: 1,
+              pl: 1.5,
+              pr: 1.5,
+              fontWeight: "bold",
             }}
+            variant="overline"
           >
-            <Typography
-              sx={{
-                bgcolor: theme.palette.mode === "dark" ? "#fff" : "#000",
-                color: theme.palette.mode === "dark" ? "#000" : "#fff",
-                fontSize: 16,
-                p: 1,
-                pl: 1.5,
-                pr: 1.5,
-                fontWeight: "bold",
-              }}
-              variant="overline"
-            >
-              S
-            </Typography>
-            hopiT.
+            S
           </Typography>
-        </Link>
+          hopiT.
+        </Typography>
         <Card
           square
           sx={{

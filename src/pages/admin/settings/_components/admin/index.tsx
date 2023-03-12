@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Grid, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 import { useState } from "react";
+
 import AddUserModal from "../AddUserModal";
 import AdminTable from "../AdminTable";
 
@@ -11,7 +12,7 @@ const Admin = () => {
 
   const handleCloseModal = () => {
     setOpenModal(false);
-  };
+  }
 
   return (
     <motion.div
@@ -43,14 +44,17 @@ const Admin = () => {
                 style={{
                   fontSize: "1rem",
                 }}
+                aria-hidden="true"
+                opacity={0.5}
               />
             }
+            aria-label="Add new user"
           >
             Add new user
           </Button>
         </Grid>
       </Grid>
-      <AdminTable />
+      <AdminTable setOpenModal={setOpenModal} />
     </motion.div>
   );
 };

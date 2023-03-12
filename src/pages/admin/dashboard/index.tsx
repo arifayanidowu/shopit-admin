@@ -10,13 +10,20 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import AnimateContainer from "src/components/shared/AnimateContainer";
 import { useStore } from "../../../store";
-import ProductTable from "../ProductTable";
+import ProductTable from "./ProductTable";
 
 const Dashboard = () => {
   const { adminData } = useStore();
+
+  const style = {
+    backgroundPosition: "top",
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
+  };
   return (
-    <Box>
+    <AnimateContainer>
       <Typography variant="h6" gutterBottom fontWeight="bold">
         Welcome Back, {adminData.name}
       </Typography>
@@ -32,10 +39,12 @@ const Dashboard = () => {
                   bgcolor: "pink",
                   height: "200px",
                   p: 1,
+                  backgroundImage: "url(/impressions/spiral2.jpeg)",
+                  ...style,
                 }}
               >
                 <Stack direction={"row"} spacing={1}>
-                  <Typography>Total Users</Typography>
+                  <Typography color="whitesmoke">Total Users</Typography>
                   <Chip
                     label={`27.8%`}
                     size="small"
@@ -43,7 +52,9 @@ const Dashboard = () => {
                     icon={<ArrowUpward />}
                   />
                 </Stack>
-                <Typography variant="h2">999.2k</Typography>
+                <Typography variant="h2" color="whitesmoke" fontWeight="bolder">
+                  999.2k
+                </Typography>
               </Box>
             </Grid>
             <Grid item xs={12} md={4}>
@@ -52,19 +63,22 @@ const Dashboard = () => {
                   bgcolor: "#b9d8d8",
                   height: "200px",
                   p: 1,
+                  backgroundImage: "url(/impressions/chewy.jpeg)",
+                  ...style,
                 }}
               >
                 <Stack direction={"row"} spacing={1}>
-                  <Typography>Total Orders</Typography>
+                  <Typography color="whitesmoke">Total Orders</Typography>
                   <Chip
                     label={`11.6%`}
                     size="small"
                     color="error"
                     icon={<ArrowDownward />}
-                    variant="outlined"
                   />
                 </Stack>
-                <Typography variant="h2">3999.2k</Typography>
+                <Typography variant="h2" color="whitesmoke" fontWeight="bolder">
+                  3999.2k
+                </Typography>
               </Box>
             </Grid>
             <Grid item xs={12} md={4}>
@@ -73,10 +87,12 @@ const Dashboard = () => {
                   bgcolor: "#cccce3",
                   height: "200px",
                   p: 1,
+                  backgroundImage: "url(/impressions/chewy2.jpeg)",
+                  ...style,
                 }}
               >
                 <Stack direction={"row"} spacing={1}>
-                  <Typography>Total Sales</Typography>
+                  <Typography color="whitesmoke">Total Sales</Typography>
                   <Chip
                     label={`10.2%`}
                     size="small"
@@ -84,7 +100,9 @@ const Dashboard = () => {
                     icon={<ArrowDownward />}
                   />
                 </Stack>
-                <Typography variant="h2">99.2k</Typography>
+                <Typography variant="h2" color="whitesmoke" fontWeight="bolder">
+                  99.2k
+                </Typography>
               </Box>
             </Grid>
             <Grid
@@ -151,15 +169,13 @@ const Dashboard = () => {
           <Box
             sx={{
               height: "60vh",
-              overflowY: "scroll",
-              p: 1,
             }}
           >
             <ProductTable />
           </Box>
         </Grid>
       </Grid>
-    </Box>
+    </AnimateContainer>
   );
 };
 

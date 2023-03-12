@@ -11,6 +11,7 @@ import { getAllAdmins, updateAdmin } from "../../../../endpoints/admins";
 import { useStore } from "src/store";
 import DeleteAdmin from "../_components/DeleteAdmin";
 
+
 export type IData = {
   id: string;
   name: string;
@@ -27,6 +28,7 @@ const useMutate = () => {
   const toastId = useRef<Id | null>(null);
   const [updatedArguments, setUpdatedArguments] = useState<any>(null);
   const [entries, setEntries] = useState<GridRowSelectionModel>([]);
+
 
   const { data, isLoading, error, isError } = useQuery<IData[]>(
     ["admins"],
@@ -189,7 +191,7 @@ const useMutate = () => {
         setUpdatedArguments(null);
         resolve(oldRow);
       });
-  }, [updatedArguments, mutateAsync, setUpdatedArguments]);
+  }, [updatedArguments, mutateAsync]);
 
   const handleClose = useCallback(() => {
     const { reject, oldRow } = updatedArguments;
@@ -198,7 +200,10 @@ const useMutate = () => {
   }, [updatedArguments, setUpdatedArguments]);
 
   const rows = useMemo(
-    () => data?.filter((item) => item.id !== adminData.id) ?? [],
+    () =>
+      data?.filter(
+        (item) => item.id !== adminData.id
+      ) ?? [],
     [data, adminData.id]
   );
 
@@ -218,6 +223,8 @@ const useMutate = () => {
     },
     [updatedArguments]
   );
+
+
 
   return {
     computeMutation,

@@ -1,12 +1,14 @@
-import { Delete } from "@mui/icons-material";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Button, SvgIcon, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { AnimatePresence, motion } from "framer-motion";
+import React from "react";
 
 import ConfirmDialog from "src/components/shared/ComfirmDialog";
 import useMutate from "../_hooks/useMutate";
+import DeleteManyAdmins from "./DeleteManyAdmins";
+import { ReactComponent as NoContentIcon } from './svgs/no-content.svg'
 
-const AdminTable = () => {
+
+const AdminTable = ({ setOpenModal }: { setOpenModal: (value: React.SetStateAction<boolean>) => void }) => {
   const {
     rows,
     columns,
@@ -30,30 +32,7 @@ const AdminTable = () => {
 
   return (
     <>
-      <AnimatePresence mode="wait">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1, marginBottom: 2 }}
-          exit={{ opacity: 0 }}
-          key={entries.length}
-        >
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <Typography>
-              {entries.length ? entriesText : "List of admins"}
-            </Typography>
-            {entries.length ? (
-              <Button
-                color="error"
-                variant="contained"
-                size="small"
-                startIcon={<Delete />}
-              >
-                Delete
-              </Button>
-            ) : null}
-          </Stack>
-        </motion.div>
-      </AnimatePresence>
+      <DeleteManyAdmins {...{ entries, entriesText }} />
       <Box
         component="div"
         sx={{ width: "100%", height: 350, overflowY: "hidden" }}
@@ -79,19 +58,33 @@ const AdminTable = () => {
           onRowSelectionModelChange={(newSelection) => {
             setEntries(newSelection);
           }}
+          rowSelectionModel={entries}
           processRowUpdate={processRowUpdate}
           onProcessRowUpdateError={handleOnProcessRowUpdateError}
           pageSizeOptions={[5, 10, 25]}
-          checkboxSelection={
-            adminData.role === "SuperAdmin" || adminData.role === "Editor"
-              ? true
-              : false
-          }
+          checkboxSelection={adminData.role === "SuperAdmin"}
           disableRowSelectionOnClick
           loading={isLoading}
-          // autoHeight
           slots={{
-            noRowsOverlay: () => <Typography>No roles found</Typography>,
+            noRowsOverlay: () => <Box sx={{
+              justifyContent: 'center',
+              display: 'flex',
+              alignItems: 'center',
+              height: '100%',
+              flexDirection: 'column',
+              py: 10
+            }}>
+              <SvgIcon component={NoContentIcon} inheritViewBox fontSize="large" sx={{
+                fontSize: '8rem',
+              }} />
+              <Typography variant="h6" align="center">
+                No admins found
+              </Typography>
+              <Button variant="contained" onClick={() => setOpenModal(true)}>
+                Add New Entry
+              </Button>
+
+            </Box>,
           }}
           sx={(theme) => ({
             bgcolor:

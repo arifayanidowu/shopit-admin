@@ -22,24 +22,36 @@ import {
   Toolbar,
   useMediaQuery,
 } from "@mui/material";
-import {
-  dividerStyle,
-  Drawer,
-  DrawerHeader,
-  lisItemStyle,
-  styledList,
-} from "./utils";
-import { ReactComponent as CollectionIcon } from "./icons/collection.svg";
+import { ChevronRight } from "@mui/icons-material";
+import { AnimatePresence, motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+
+import { Drawer, DrawerHeader, lisItemStyle, styledList } from "./utils";
+import { ReactComponent as CollectionIcon } from "./icons/collection.svg";
 import { getProfile } from "../../endpoints/getProfile";
 import { logout } from "../../endpoints/services/axiosService";
-import { ChevronRight } from "@mui/icons-material";
-import { toast } from "react-toastify";
 import { useStore } from "../../store";
 import { ColorModeContext } from "../../App";
 import { dashboardLinks, generalLinks } from "./links";
 import PopupMenu from "./PopupMenu";
-import { AnimatePresence, motion } from "framer-motion";
+
+const Indicator = ({ variants }: { variants: any }) => (
+  <motion.div
+    variants={variants}
+    initial="hidden"
+    animate="visible"
+    exit="exit"
+    style={{
+      position: "absolute",
+      top: 0,
+      right: -10,
+      background: "#9d5e69",
+      width: 5,
+      height: "100%",
+    }}
+  />
+);
 
 export default function AdminLayout() {
   const theme = useTheme();
@@ -109,10 +121,15 @@ export default function AdminLayout() {
 
   const variants = {
     open: {
-      transition: { staggerChildren: 0.07, delayChildren: 0.2 },
+      opacity: 1,
+      transition: { staggerChildren: 0.07, delayChildren: 0.5 },
     },
     closed: {
-      transition: { staggerChildren: 0.05, staggerDirection: -1 },
+      opacity: 0,
+      transition: {
+        staggerChildren: 0.5,
+        staggerDirection: -1,
+      },
     },
   };
 
@@ -127,6 +144,12 @@ export default function AdminLayout() {
       opacity: 0,
       transition: { ease: "easeOut", duration: 2 },
     },
+  };
+
+  const dividerVariant = {
+    hidden: { scale: 0, x: 12 },
+    visible: { scale: 1, x: 0 },
+    exit: { scale: 0, x: -12 },
   };
 
   return (
@@ -173,6 +196,8 @@ export default function AdminLayout() {
                     sx={{
                       minWidth: 0,
                       justifyContent: "center",
+                      transition: "all 0.5s ease-in-out",
+                      ml: open ? 0 : -0.24,
                     }}
                   >
                     {item.icon}
@@ -180,7 +205,13 @@ export default function AdminLayout() {
                   <ListItemText
                     primary={item.label}
                     sx={{ ...styledList(open) }}
+                    color="text.primary.light"
                   />
+                  {location?.pathname === item.href && (
+                    <AnimatePresence>
+                      <Indicator variants={dividerVariant} />
+                    </AnimatePresence>
+                  )}
                 </ListItemButton>
               </ListItem>
             ))}
@@ -190,7 +221,10 @@ export default function AdminLayout() {
             component="nav"
             aria-labelledby="nested-list-subheader"
             subheader={
-              <ListSubheader component={Box} sx={{ p: 0 }}>
+              <ListSubheader
+                component={Box}
+                sx={{ p: 0, background: "transparent" }}
+              >
                 <ListItemButton
                   onClick={() => setOpenDropdown((prev) => !prev)}
                   sx={{
@@ -202,15 +236,14 @@ export default function AdminLayout() {
                     sx={{
                       minWidth: 0,
                       justifyContent: "center",
-                      ml: open ? 0 : -1.2,
+                      ml: open ? 0 : -1.24,
                       transition: "all 0.5s ease-in-out",
                     }}
                   >
-                    <SvgIcon inheritViewBox component={CollectionIcon} />
-                    <Divider
-                      sx={{
-                        ...dividerStyle(open),
-                      }}
+                    <SvgIcon
+                      inheritViewBox
+                      component={CollectionIcon}
+                      opacity={0.5}
                     />
                   </ListItemIcon>
                   <ListItemText
@@ -225,6 +258,7 @@ export default function AdminLayout() {
                       transition: "all 0.3s ease-in-out",
                       opacity: open ? 1 : 0,
                       translateX: open ? 0 : -10,
+                      fillOpacity: 0.5,
                     }}
                   />
                 </ListItemButton>
@@ -238,10 +272,7 @@ export default function AdminLayout() {
               <Collapse in={openDropdown} timeout="auto" unmountOnExit>
                 <motion.div variants={variants}>
                   <AnimatePresence mode="sync">
-                    <motion.div
-                      key={"show-" + openDropdown}
-                      variants={itemVariants}
-                    >
+                    <motion.div variants={itemVariants}>
                       {generalLinks().map((item) => (
                         <ListItem
                           disablePadding
@@ -267,6 +298,11 @@ export default function AdminLayout() {
                               primary={item.label}
                               sx={{ ...styledList(open) }}
                             />
+                            {location?.pathname === item.href && (
+                              <AnimatePresence>
+                                <Indicator variants={dividerVariant} />
+                              </AnimatePresence>
+                            )}
                           </ListItemButton>
                         </ListItem>
                       ))}
