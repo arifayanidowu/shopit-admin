@@ -63,7 +63,13 @@ export default function AdminLayout() {
   const { toggleColorMode } = React.useContext(ColorModeContext);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
-  const { data, isLoading, isError, error } = useQuery(["profile"], getProfile);
+  const { data, isLoading, isError, error } = useQuery(
+    ["profile"],
+    getProfile,
+    {
+      retry: false,
+    }
+  );
   const navigate = useNavigate();
   const token = localStorage.getItem("auth_token");
 
@@ -233,12 +239,15 @@ export default function AdminLayout() {
                   }}
                 >
                   <ListItemIcon
-                    sx={{
+                    sx={(theme) => ({
                       minWidth: 0,
                       justifyContent: "center",
-                      ml: open ? 0 : -1.24,
+                      ml: open ? 0 : "-9.80px",
                       transition: "all 0.5s ease-in-out",
-                    }}
+                      [theme.breakpoints.down("sm")]: {
+                        ml: open ? 0 : "-11.99px",
+                      },
+                    })}
                   >
                     <SvgIcon
                       inheritViewBox
@@ -248,7 +257,9 @@ export default function AdminLayout() {
                   </ListItemIcon>
                   <ListItemText
                     primary="Collections"
-                    sx={{ ...styledList(open) }}
+                    sx={{
+                      ...styledList(open),
+                    }}
                   />
                   <ChevronRight
                     sx={{
@@ -324,22 +335,27 @@ export default function AdminLayout() {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
+                gap: 1,
               }}
             >
               <Typography noWrap component="p" sx={{ fontSize: "0.9rem" }}>
-                {adminData?.name}
+                {adminData.username ?? adminData?.name}
               </Typography>
               <IconButton
                 aria-label="User's Avatar"
-                sx={{ mr: 2 }}
+                sx={{ mr: 2, bgcolor: "rgba(0,0,0,0.02)" }}
                 onClick={handleClick}
               >
-                <Avatar src={adminData?.avatar} sx={{ p: 2 }}>
-                  <Typography sx={{ fontSize: "0.8rem" }} color="primary">
-                    {splittedName?.[0][0]}
-                    {splittedName?.[1][0]}
-                  </Typography>
-                </Avatar>
+                {adminData.avatar ? (
+                  <Avatar src={adminData?.avatar} alt={adminData?.name} />
+                ) : (
+                  <Avatar sx={{ p: 2 }}>
+                    <Typography sx={{ fontSize: "0.8rem" }} color="primary">
+                      {splittedName?.[0][0]}
+                      {splittedName?.[1][0]}
+                    </Typography>
+                  </Avatar>
+                )}
               </IconButton>
               <PopupMenu
                 {...{

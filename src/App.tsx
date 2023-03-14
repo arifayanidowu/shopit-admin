@@ -9,7 +9,7 @@ import useMode from "./hooks/useMode";
 import router from "./routes/router";
 
 export const ColorModeContext = React.createContext({
-  toggleColorMode: () => {},
+  toggleColorMode: () => { },
 });
 
 function App() {

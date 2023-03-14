@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import AnimateContainer from "src/components/shared/AnimateContainer";
+import { toCapitalize } from "src/utils/toCapitalize";
 import { useStore } from "../../../store";
 import ProductTable from "./ProductTable";
 
@@ -25,7 +26,7 @@ const Dashboard = () => {
   return (
     <AnimateContainer>
       <Typography variant="h6" gutterBottom fontWeight="bold">
-        Welcome Back, {adminData.name}
+        Welcome Back, {toCapitalize(adminData.username) ?? adminData.name}
       </Typography>
       <Grid container spacing={1}>
         <Grid item xs={12} md={8}>

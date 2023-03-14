@@ -52,7 +52,6 @@ const DeleteManyAdmins = ({
   const handleCloseConfirm = () => {
     setOpenConfirm(false);
   }
-  console.log(entries)
   return (
     <>
       <ConfirmDialog

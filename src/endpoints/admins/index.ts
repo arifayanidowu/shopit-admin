@@ -86,3 +86,24 @@ export const deleteAdmins = async (ids: string[]) => {
     }
   }
 };
+
+export const updateProfile = async (data: any) => {
+  const token = localStorage.getItem("auth_token");
+  axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+  try {
+    const response = await axios.patch(`/auth/update/admin/profile`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    const err = error as AxiosError<{
+      message: string;
+    }>;
+    if (err.response) {
+      throw new Error(err.response?.data.message);
+    }
+  }
+};

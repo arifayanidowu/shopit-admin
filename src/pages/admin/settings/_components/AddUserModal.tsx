@@ -30,7 +30,7 @@ const AddUserModal = ({
 }) => {
   const queryClient = useQueryClient();
   let toastId: Id;
-  const { control, handleSubmit, reset } = useForm<IFormValues>();
+  const { control, handleSubmit, register, formState: { errors }, reset } = useForm<IFormValues>();
   const { mutate, isLoading } = useMutation(createAdmin, {
     onSuccess: () => {
       queryClient.invalidateQueries(["admins"]);
@@ -104,6 +104,11 @@ const AddUserModal = ({
                 fullWidth
                 sx={{ mb: 2 }}
                 {...field}
+                {...register("name", {
+                  required: "Name is required",
+                })}
+                helperText={errors.name?.message}
+                error={!!errors.name}
               />
             )}
           />
@@ -118,6 +123,11 @@ const AddUserModal = ({
                 label="Email"
                 fullWidth
                 {...field}
+                {...register("email", {
+                  required: "Email is required",
+                })}
+                helperText={errors.email?.message}
+                error={!!errors.email}
               />
             )}
           />
@@ -128,7 +138,7 @@ const AddUserModal = ({
             variant="contained"
             color="primary"
             size="large"
-            endIcon={isLoading && <CircularProgress />}
+            endIcon={isLoading && <CircularProgress size={20} />}
             disableElevation
           >
             {isLoading ? "Loading..." : "Add New User"}

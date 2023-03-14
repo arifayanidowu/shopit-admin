@@ -22,11 +22,18 @@ export type IData = {
   updatedAt: Date;
 };
 
+type TUpdatedArguments = {
+  oldRow: IData;
+  newRow: IData;
+  resolve: (value: IData | PromiseLike<IData>) => void
+  reject: (reason?: any) => void
+}
+
 const useMutate = () => {
   const { adminData } = useStore();
   const queryClient = useQueryClient();
   const toastId = useRef<Id | null>(null);
-  const [updatedArguments, setUpdatedArguments] = useState<any>(null);
+  const [updatedArguments, setUpdatedArguments] = useState<null | TUpdatedArguments>(null);
   const [entries, setEntries] = useState<GridRowSelectionModel>([]);
 
 
@@ -163,7 +170,7 @@ const useMutate = () => {
 
   const processRowUpdate = useCallback(
     (newRow: IData, oldRow: IData): Promise<IData> => {
-      return new Promise((resolve, reject) => {
+      return new Promise<IData>((resolve, reject) => {
         const mutation = computeMutation(newRow, oldRow);
         if (mutateError) {
           resolve(oldRow);
@@ -180,7 +187,7 @@ const useMutate = () => {
   );
 
   const handleConfirm = useCallback(async () => {
-    const { resolve, newRow, oldRow } = updatedArguments;
+    const { resolve, newRow, oldRow } = updatedArguments!;
     toastId.current = toast.loading("Updating admin...");
     mutateAsync(newRow)
       .then(() => {
@@ -193,11 +200,13 @@ const useMutate = () => {
       });
   }, [updatedArguments, mutateAsync]);
 
-  const handleClose = useCallback(() => {
-    const { reject, oldRow } = updatedArguments;
+
+  const handleClose = useCallback(async () => {
+    const { oldRow, resolve } = updatedArguments!;
+    resolve(oldRow);
     setUpdatedArguments(null);
-    reject(oldRow);
-  }, [updatedArguments, setUpdatedArguments]);
+  }, [updatedArguments]);
+
 
   const rows = useMemo(
     () =>

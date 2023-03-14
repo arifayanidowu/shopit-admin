@@ -3,6 +3,7 @@ import {
   createRoutesFromElements,
   Route,
 } from "react-router-dom";
+import Profile from "src/pages/admin/profile";
 import AdminLayout from "../components/AdminLayout";
 import ErrorBoundary from "../components/ErrorBoundary";
 import Dashboard from "../pages/admin/dashboard";
@@ -25,16 +26,18 @@ const router = createBrowserRouter(
         element={<EmailVerify />}
         errorElement={<ErrorBoundary />}
       />
-      <Route path="admin" element={<AdminLayout />}>
+      <Route path="admin" element={<AdminLayout />} errorElement={<ErrorBoundary />}>
         <Route
           path="dashboard"
           element={<Dashboard />}
-          errorElement={<ErrorBoundary />}
         />
         <Route
           path="settings"
           element={<Settings />}
-          errorElement={<ErrorBoundary />}
+        />
+        <Route
+          path="profile"
+          element={<Profile />}
         />
       </Route>
     </>

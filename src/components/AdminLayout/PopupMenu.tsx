@@ -21,6 +21,7 @@ const PopupMenu = ({
   resetState,
   navigate,
 }: PopupMenuProps) => {
+
   return (
     <Menu
       anchorEl={anchorEl}
@@ -36,7 +37,10 @@ const PopupMenu = ({
       }}
       elevation={0}
     >
-      <MenuItem onClick={handleClose}>Profile</MenuItem>
+      <MenuItem onClick={() => {
+        navigate("/admin/profile");
+        handleClose();
+      }}>Profile</MenuItem>
       <MenuItem onClick={toggleColorMode}>Toggle Theme</MenuItem>
       <MenuItem
         onClick={() => logout(navigate, resetState)}
