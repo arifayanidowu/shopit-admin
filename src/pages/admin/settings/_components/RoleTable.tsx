@@ -13,7 +13,7 @@ const RoleTable = () => {
   const matches = useMediaQuery("(max-width: 600px)");
   const { data, isLoading, error, isError } = useQuery(
     ["adminCounts"],
-    getAdminCounts
+    getAdminCounts,
   );
 
   useEffect(() => {
@@ -97,7 +97,7 @@ const RoleTable = () => {
       exit={{ opacity: 0, x: 10 }}
       transition={{ duration: 0.2, easings: ["easeIn", "easeInOut"] }}
     >
-      <Typography variant="h3">Roles</Typography>
+      <Typography variant="h4">Roles</Typography>
       <Typography>List of roles</Typography>
 
       <DataGrid

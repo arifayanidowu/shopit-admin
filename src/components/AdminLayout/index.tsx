@@ -66,9 +66,6 @@ export default function AdminLayout() {
   const { data, isLoading, isError, error } = useQuery(
     ["profile"],
     getProfile,
-    {
-      retry: false,
-    }
   );
   const navigate = useNavigate();
   const token = localStorage.getItem("auth_token");
@@ -343,7 +340,7 @@ export default function AdminLayout() {
               </Typography>
               <IconButton
                 aria-label="User's Avatar"
-                sx={{ mr: 2, bgcolor: "rgba(0,0,0,0.02)" }}
+                sx={(theme) => ({ mr: 2, bgcolor: theme.palette.mode === 'light' ? "rgba(0,0,0,0.02)" : "rgba(255,255,255,0.03)" })}
                 onClick={handleClick}
               >
                 {adminData.avatar ? (

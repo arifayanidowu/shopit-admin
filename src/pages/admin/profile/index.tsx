@@ -99,6 +99,7 @@ const Profile = () => {
             "image/jpeg": [],
             "image/png": [],
             "image/jpg": [],
+            "image/webp": [],
             "image/svg+xml": [],
         },
     });
@@ -125,9 +126,9 @@ const Profile = () => {
     return (
         <AnimateContainer>
             <Box>
-                <Grid container justifyContent={"space-between"} alignItems="center">
+                <Grid container justifyContent={"space-between"} alignItems="center" sx={{ mb: 2 }}>
                     <Grid item>
-                        <Typography variant="h3">Profile</Typography>
+                        <Typography variant="h4">{adminData?.username ?? adminData?.name}</Typography>
                     </Grid>
                     <Grid item>
                         <Button
@@ -148,9 +149,14 @@ const Profile = () => {
                                 width: "100%",
                                 overflow: "hidden",
                                 position: "relative",
+                                cursor: "pointer",
+                                transition: "all 0.3s ease-in-out",
                                 [theme.breakpoints.down("md")]: {
                                     height: 200,
                                 },
+                                "&:hover": {
+                                    backgroundColor: theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
+                                }
                             })}
                             {...getRootProps()}
                             component="div"
@@ -171,6 +177,12 @@ const Profile = () => {
                                         zIndex: 1,
                                         wordWrap: "break-word",
                                         textAlign: "center",
+                                        "& img": {
+                                            transition: "all 0.3s ease-in-out",
+                                            "&:hover": {
+                                                opacity: 0.9,
+                                            }
+                                        }
                                     }}
                                 >
                                     {image || adminData.avatar ? (

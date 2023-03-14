@@ -18,11 +18,11 @@ const Settings = () => {
   const [showView, setShowView] = useState<"role" | "user">("role");
 
   return (
-    <AnimateContainer>
+    <AnimateContainer title="Settings">
       <Grid container spacing={1}>
         <Grid item xs={12} md={2}>
           <Box>
-            <Typography variant="h3">Settings</Typography>
+            <Typography variant="h4">Modules</Typography>
             <Typography>Administrative Panel</Typography>
           </Box>
           <Paper

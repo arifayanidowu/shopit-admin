@@ -30,7 +30,7 @@ const Admin = () => {
 
       <Grid container justifyContent="space-between" alignItems="center">
         <Grid item>
-          <Typography variant="h3">Admins</Typography>
+          <Typography variant="h4">Admins</Typography>
         </Grid>
         <Grid item>
           <Button

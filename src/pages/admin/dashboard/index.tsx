@@ -24,10 +24,8 @@ const Dashboard = () => {
     backgroundRepeat: "no-repeat",
   };
   return (
-    <AnimateContainer>
-      <Typography variant="h6" gutterBottom fontWeight="bold">
-        Welcome Back, {toCapitalize(adminData.username) ?? adminData.name}
-      </Typography>
+    <AnimateContainer subtitle={` Welcome Back, ${toCapitalize(adminData.username) ?? adminData.name}`}>
+
       <Grid container spacing={1}>
         <Grid item xs={12} md={8}>
           <Typography variant="h6" gutterBottom fontWeight="medium">

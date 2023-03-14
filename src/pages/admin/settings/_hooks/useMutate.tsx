@@ -39,7 +39,7 @@ const useMutate = () => {
 
   const { data, isLoading, error, isError } = useQuery<IData[]>(
     ["admins"],
-    getAllAdmins
+    getAllAdmins,
   );
 
   const { mutateAsync, isError: mutateError } = useMutation({
