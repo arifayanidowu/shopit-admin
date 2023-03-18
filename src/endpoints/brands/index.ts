@@ -51,3 +51,17 @@ export const getAllBrands = async () => {
     }
   }
 };
+
+export const deleteBrand = async (id: string) => {
+  try {
+    const response = await axios.delete(`/brand/${id}`);
+    return response.data;
+  } catch (error) {
+    const err = error as AxiosError<{
+      message: string;
+    }>;
+    if (err.response) {
+      throw new Error(err.response?.data.message);
+    }
+  }
+};

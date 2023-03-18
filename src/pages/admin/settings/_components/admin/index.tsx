@@ -12,7 +12,7 @@ const Admin = () => {
 
   const handleCloseModal = () => {
     setOpenModal(false);
-  }
+  };
 
   return (
     <motion.div
