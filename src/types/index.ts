@@ -3,6 +3,12 @@ enum Gender {
   Female,
 }
 
+export enum Role {
+  Author,
+  Editor,
+  SuperAdmin,
+}
+
 type BillingInfo = {
   address: string;
   city: string;
@@ -33,7 +39,8 @@ export type Admin = {
   updatedAt: Date;
   role: string;
   active: boolean;
-  validateToken: string | null;
+  validateToken?: string | null;
+  callbackUrl?: string | null;
 };
 
 export type Category = {

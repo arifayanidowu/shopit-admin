@@ -6,7 +6,6 @@ import { useEffect, useMemo, memo } from "react";
 import { toast } from "react-toastify";
 import { getAdminCounts } from "src/endpoints/auth";
 
-
 const MemoizedRow = memo(GridRow);
 const MemoizedColumnHeaders = memo(GridColumnHeaders);
 
@@ -14,7 +13,7 @@ const RoleTable = () => {
   const matches = useMediaQuery("(max-width: 600px)");
   const { data, isLoading, error, isError } = useQuery(
     ["adminCounts"],
-    getAdminCounts,
+    getAdminCounts
   );
 
   useEffect(() => {
@@ -29,7 +28,7 @@ const RoleTable = () => {
       {
         id: 1,
         name: "Author",
-        description: "Authors can manage only contents they create",
+        description: "Authors can read all contents but can't manage",
         users: isLoading ? "loading..." : data?.authors,
       },
       {
@@ -43,7 +42,7 @@ const RoleTable = () => {
         id: 3,
         name: "SuperAdmin",
         description:
-          "SuperAdmin's can access and manage all features and settings.",
+          "SuperAdmin's can access and manage all contents and settings.",
         users: isLoading ? "loading..." : data?.superAdmins,
       },
     ],

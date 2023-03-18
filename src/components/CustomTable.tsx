@@ -12,6 +12,7 @@ import {
   GridSlotsComponentsProps,
 } from "@mui/x-data-grid";
 import { UncapitalizeObjectKeys } from "@mui/x-data-grid/internals";
+import { GridInitialStateCommunity } from "@mui/x-data-grid/models/gridStateCommunity";
 import NoEntry from "./shared/NoEntry";
 
 interface ICustomTable {
@@ -41,6 +42,7 @@ interface ICustomTable {
   slotProps?: GridSlotsComponentsProps | undefined;
   onRowEditStart?: GridEventListener<"rowEditStart"> | undefined;
   onRowEditStop?: GridEventListener<"rowEditStop"> | undefined;
+  initialState?: GridInitialStateCommunity | undefined;
 }
 
 const CustomTable = ({
@@ -60,6 +62,7 @@ const CustomTable = ({
   slotProps,
   onRowEditStart,
   onRowEditStop,
+  initialState,
 }: ICustomTable) => {
   return (
     <Box
@@ -69,14 +72,16 @@ const CustomTable = ({
       <DataGrid
         rows={rows}
         columns={columns}
-        initialState={{
-          pagination: { paginationModel: { pageSize: 5 } },
-          columns: {
-            columnVisibilityModel: {
-              id: false,
-            },
-          },
-        }}
+        initialState={initialState}
+        // initialState={{
+        //   ...initialState,
+        //   pagination: { paginationModel: { pageSize: 5 } },
+        //   columns: {
+        //     columnVisibilityModel: {
+        //       id: false,
+        //     },
+        //   },
+        // }}
         editMode={editMode}
         rowModesModel={rowModesModel}
         onRowModesModelChange={onRowModesModelChange}

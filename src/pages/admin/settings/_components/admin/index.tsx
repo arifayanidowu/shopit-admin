@@ -3,12 +3,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Grid, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useStore } from "src/store";
+import { adminActions } from "src/utils/adminActions";
 
 import AddUserModal from "../AddUserModal";
 import AdminTable from "../AdminTable";
 
 const Admin = () => {
   const [openModal, setOpenModal] = useState(false);
+  const { adminData } = useStore();
 
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -33,25 +36,27 @@ const Admin = () => {
           <Typography variant="h4">Admins</Typography>
         </Grid>
         <Grid item>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => setOpenModal(true)}
-            disableElevation
-            startIcon={
-              <FontAwesomeIcon
-                icon={faPlus}
-                style={{
-                  fontSize: "1rem",
-                }}
-                aria-hidden="true"
-                opacity={0.5}
-              />
-            }
-            aria-label="Add new user"
-          >
-            Add new user
-          </Button>
+          {adminActions(adminData, "Create") !== false ? (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setOpenModal(true)}
+              disableElevation
+              startIcon={
+                <FontAwesomeIcon
+                  icon={faPlus}
+                  style={{
+                    fontSize: "1rem",
+                  }}
+                  aria-hidden="true"
+                  opacity={0.5}
+                />
+              }
+              aria-label="Add new user"
+            >
+              Add new user
+            </Button>
+          ) : null}
         </Grid>
       </Grid>
       <AdminTable setOpenModal={setOpenModal} />

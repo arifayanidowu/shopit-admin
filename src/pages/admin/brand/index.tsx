@@ -6,6 +6,7 @@ import CustomTable from "src/components/CustomTable";
 import PageLoader from "src/components/PageLoader";
 import AnimateContainer from "src/components/shared/AnimateContainer";
 import ConfirmDialog from "src/components/shared/ComfirmDialog";
+import { adminActions } from "src/utils/adminActions";
 import AddBrandModal from "./_components/AddBrandModal";
 import useBrand from "./_hooks/useBrand";
 
@@ -27,6 +28,7 @@ const Brand = () => {
     handleConfirm,
     rowModesModel,
     setRowModesModel,
+    adminData,
   } = useBrand();
 
   if (isLoading) return <PageLoader />;
@@ -86,6 +88,15 @@ const Brand = () => {
             onRowEditStop={handleRowEditStop}
             slotProps={{
               toolbar: { setRowModesModel },
+            }}
+            initialState={{
+              pagination: { paginationModel: { pageSize: 5 } },
+              columns: {
+                columnVisibilityModel: {
+                  id: false,
+                  actions: adminActions(adminData, "Delete"),
+                },
+              },
             }}
           />
         </Box>

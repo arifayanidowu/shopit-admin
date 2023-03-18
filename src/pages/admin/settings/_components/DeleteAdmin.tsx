@@ -1,6 +1,6 @@
 import { Delete } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast, Id } from "react-toastify";
 import { deleteAdmin } from "src/endpoints/admins";

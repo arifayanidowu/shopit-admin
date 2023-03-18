@@ -17,6 +17,7 @@ import moment from "moment";
 import { useMemo, useEffect, useState, useCallback, useRef } from "react";
 import { toast, Id } from "react-toastify";
 import { deleteBrand, getAllBrands, updateBrand } from "src/endpoints/brands";
+import { useStore } from "src/store";
 import type { Brand as IBrand } from "src/types";
 
 const useBrand = () => {
@@ -26,6 +27,7 @@ const useBrand = () => {
   const [open, setOpen] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [brandId, setBrandId] = useState<string | null>(null);
+  const { adminData } = useStore();
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
   const { data, isLoading, error } = useQuery<IBrand[]>(
     ["brands"],
@@ -191,7 +193,7 @@ const useBrand = () => {
         },
       },
       {
-        field: "action",
+        field: "actions",
         type: "actions",
         headerName: "Action",
         width: 130,
@@ -310,6 +312,7 @@ const useBrand = () => {
     handleConfirm,
     rowModesModel,
     setRowModesModel,
+    adminData,
   };
 };
 

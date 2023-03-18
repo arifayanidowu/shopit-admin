@@ -11,7 +11,6 @@ import { getAllAdmins, updateAdmin } from "../../../../endpoints/admins";
 import { useStore } from "src/store";
 import DeleteAdmin from "../_components/DeleteAdmin";
 
-
 export type IData = {
   id: string;
   name: string;
@@ -25,21 +24,21 @@ export type IData = {
 type TUpdatedArguments = {
   oldRow: IData;
   newRow: IData;
-  resolve: (value: IData | PromiseLike<IData>) => void
-  reject: (reason?: any) => void
-}
+  resolve: (value: IData | PromiseLike<IData>) => void;
+  reject: (reason?: any) => void;
+};
 
 const useMutate = () => {
   const { adminData } = useStore();
   const queryClient = useQueryClient();
   const toastId = useRef<Id | null>(null);
-  const [updatedArguments, setUpdatedArguments] = useState<null | TUpdatedArguments>(null);
+  const [updatedArguments, setUpdatedArguments] =
+    useState<null | TUpdatedArguments>(null);
   const [entries, setEntries] = useState<GridRowSelectionModel>([]);
-
 
   const { data, isLoading, error, isError } = useQuery<IData[]>(
     ["admins"],
-    getAllAdmins,
+    getAllAdmins
   );
 
   const { mutateAsync, isError: mutateError } = useMutation({
@@ -106,8 +105,8 @@ const useMutate = () => {
         width: 130,
         type: "singleSelect",
         editable:
-          adminData.role === "SuperAdmin" ||
-          (adminData.role === "Editor" && true),
+          (adminData.role === "SuperAdmin" || adminData.role === "Editor") &&
+          true,
         valueOptions: ["Author", "Editor", "SuperAdmin"],
       },
       {
@@ -155,7 +154,7 @@ const useMutate = () => {
         ),
       },
     ],
-    [adminData.role]
+    [adminData]
   );
 
   const computeMutation = useCallback((newRow: IData, oldRow: IData) => {
@@ -189,9 +188,9 @@ const useMutate = () => {
   const handleConfirm = useCallback(async () => {
     const { resolve, newRow, oldRow } = updatedArguments!;
     toastId.current = toast.loading("Updating admin...");
+    setUpdatedArguments(null);
     mutateAsync(newRow)
       .then(() => {
-        setUpdatedArguments(null);
         resolve(newRow);
       })
       .catch((error) => {
@@ -200,19 +199,14 @@ const useMutate = () => {
       });
   }, [updatedArguments, mutateAsync]);
 
-
   const handleClose = useCallback(async () => {
     const { oldRow, resolve } = updatedArguments!;
     resolve(oldRow);
     setUpdatedArguments(null);
   }, [updatedArguments]);
 
-
   const rows = useMemo(
-    () =>
-      data?.filter(
-        (item) => item.id !== adminData.id
-      ) ?? [],
+    () => data?.filter((item) => item.id !== adminData.id) ?? [],
     [data, adminData.id]
   );
 
@@ -232,8 +226,6 @@ const useMutate = () => {
     },
     [updatedArguments]
   );
-
-
 
   return {
     computeMutation,
