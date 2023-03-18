@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
 import { useLocation } from "react-router-dom";
@@ -7,9 +7,10 @@ interface AnimateContainerProps {
   children: React.ReactNode;
   title?: string;
   subtitle?: string;
+  ActionButton?: React.ReactNode;
 }
 
-const AnimateContainer = ({ children, title, subtitle }: AnimateContainerProps) => {
+const AnimateContainer = ({ children, title, subtitle, ActionButton }: AnimateContainerProps) => {
   const location = useLocation()
   const container = {
     hidden: { opacity: 0, x: -20 },
@@ -57,11 +58,16 @@ const AnimateContainer = ({ children, title, subtitle }: AnimateContainerProps) 
 
         </motion.div>
         <motion.div variants={item}>
-          <Typography variant="h6" gutterBottom fontWeight="bold">
-            {subtitle}
-          </Typography>
-        </motion.div>
-        <motion.div variants={item}>
+          <Grid container justifyContent={'space-between'} alignItems="center" sx={{ mb: 1 }}>
+            <Grid item>
+              <Typography variant="h6" fontWeight="bold">
+                {subtitle}
+              </Typography>
+            </Grid>
+            <Grid item>
+              {ActionButton}
+            </Grid>
+          </Grid>
           {children}
         </motion.div>
       </motion.div>

@@ -1,21 +1,9 @@
+import type { Admin } from "./../types/index";
 import { create } from "zustand";
 import { devtools, persist, createJSONStorage } from "zustand/middleware";
 
-type AdminDataType = {
-  id: string;
-  email: string;
-  name: string;
-  username: string;
-  avatar: string;
-  createdAt: Date;
-  updatedAt: Date;
-  role: string;
-  active: boolean;
-  validateToken: string | null;
-};
-
 export interface State {
-  adminData: AdminDataType;
+  adminData: Admin;
   pageHistory: any[];
 }
 
@@ -26,7 +14,7 @@ export interface StoreActions {
 }
 
 const initialState = {
-  adminData: {} as AdminDataType,
+  adminData: {} as Admin,
   pageHistory: [],
 };
 

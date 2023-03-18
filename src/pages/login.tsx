@@ -10,19 +10,43 @@ import {
   useTheme,
 } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { Id, toast } from "react-toastify";
-import { authLogin } from "../endpoints/authLogin";
+import { authLogin } from "src/endpoints/auth";
 import { useStore } from "../store";
 
 const Login = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const { setAdminData } = useStore();
-  const [email, setEmail] = useState("");
   let toastId: Id;
   const token = localStorage.getItem("auth_token");
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      email: "",
+    },
+    resolver: (data) => {
+      const errors: Record<string, any> = {};
+      if (!data.email) {
+        errors.email = { message: "Email is required" };
+      }
+
+      if (!data.email.includes("@")) {
+        errors.email = { message: "Not a valid email address" };
+      }
+
+      return {
+        values: data,
+        errors,
+      };
+    },
+  });
 
   useEffect(() => {
     if (token) {
@@ -40,9 +64,6 @@ const Login = () => {
         closeButton: true,
       });
       navigate("/email/verification");
-      setAdminData({
-        email,
-      });
 
       setTimeout(() => {
         toast.dismiss(toastId);
@@ -64,6 +85,14 @@ const Login = () => {
     },
   });
 
+  const onSubmit = ({ email }: { email: string }) => {
+    toastId = toast.loading("Logging in...");
+    setAdminData({
+      email,
+    });
+    mutate(email);
+  };
+
   return (
     <Box>
       <Box
@@ -71,7 +100,6 @@ const Login = () => {
           margin: "60px",
         }}
       >
-
         <Typography
           align="center"
           variant="h6"
@@ -81,7 +109,7 @@ const Login = () => {
             width: "fit-content",
             mx: "auto",
             color: "inherit",
-            display: 'block'
+            display: "block",
           }}
           component={Link}
         >
@@ -118,38 +146,39 @@ const Login = () => {
               >
                 Sign In
               </Typography>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  toastId = toast.loading("Logging in...");
-                  mutate(email);
-                }}
-              >
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <Box sx={{ p: 3 }}>
                   <InputLabel
                     sx={{ fontWeight: "bold", textTransform: "uppercase" }}
                   >
                     Email Address
                   </InputLabel>
-                  <TextField
-                    variant="outlined"
-                    fullWidth
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                  <Controller
+                    control={control}
+                    name="email"
+                    render={({ field }) => (
+                      <TextField
+                        variant="outlined"
+                        fullWidth
+                        {...field}
+                        helperText={errors?.email?.message}
+                        error={!!errors.email}
+                      />
+                    )}
                   />
+
                   <Button
                     sx={{ textTransform: "uppercase", p: 2, mt: 3 }}
                     variant="contained"
                     fullWidth
                     endIcon={
                       isLoading ? (
-                        <CircularProgress color="inherit" size={20} />
+                        <CircularProgress color="inherit" size={14} />
                       ) : null
                     }
                     type="submit"
                   >
-                    {isLoading ? "Verifying..." : "Sign In"}
+                    {isLoading ? "Processing..." : "Sign In"}
                   </Button>
                 </Box>
               </form>

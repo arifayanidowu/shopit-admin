@@ -8,6 +8,7 @@ import { ToastContainer } from "react-toastify";
 import useMode from "./hooks/useMode";
 import router from "./routes/router";
 
+
 export const ColorModeContext = React.createContext({
   toggleColorMode: () => { },
 });
@@ -15,6 +16,7 @@ export const ColorModeContext = React.createContext({
 function App() {
   const { reset } = useQueryErrorResetBoundary();
   const { colorMode, memoizedTheme } = useMode();
+
   return (
     <ErrorBoundary
       onReset={reset}

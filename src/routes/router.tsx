@@ -3,6 +3,7 @@ import {
   createRoutesFromElements,
   Route,
 } from "react-router-dom";
+import Brand from "src/pages/admin/brand";
 import Profile from "src/pages/admin/profile";
 import AdminLayout from "../components/AdminLayout";
 import ErrorBoundary from "../components/ErrorBoundary";
@@ -38,6 +39,10 @@ const router = createBrowserRouter(
         <Route
           path="profile"
           element={<Profile />}
+        />
+        <Route
+          path="brand"
+          element={<Brand />}
         />
       </Route>
     </>

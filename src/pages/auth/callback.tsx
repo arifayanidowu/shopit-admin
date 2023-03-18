@@ -3,8 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import PageLoader from "src/components/PageLoader";
-import { getMagicToken } from "../../endpoints/getMagicToken";
+import { getMagicToken } from "src/endpoints/auth";
 import { ReactComponent as UnauthorizedIcon } from './_svgs/unauthorized.svg'
+
 
 
 const AuthCallback = () => {

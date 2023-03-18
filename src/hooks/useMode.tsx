@@ -62,9 +62,8 @@ const useMode = () => {
                 fontWeight: 600,
                 textTransform: "none",
                 borderRadius: "0px",
-                border: `0.5px solid ${
-                  mode === "light" ? "#e0e0e0" : "#515151"
-                }`,
+                border: `0.5px solid ${mode === "light" ? "#e0e0e0" : "#515151"
+                  }`,
                 "&:hover": {
                   transform: "translateY(-2px)",
                   transition: "transform 0.2s ease-in-out",

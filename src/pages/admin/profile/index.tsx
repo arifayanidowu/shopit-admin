@@ -1,276 +1,218 @@
 import { Check, Delete } from "@mui/icons-material";
 import {
-    Box,
-    Button,
-    CircularProgress,
-    Grid,
-    Paper,
-    TextField,
-    Typography,
+  Box,
+  Button,
+  CircularProgress,
+  Grid,
+  Paper,
+  TextField,
+  Typography,
 } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState, useCallback, useEffect } from "react";
-import { useDropzone } from "react-dropzone";
+import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { toast, Id } from "react-toastify";
 
 import AnimateContainer from "src/components/shared/AnimateContainer";
+import DropzoneContent from "src/components/shared/DropzoneContent";
 import { updateProfile } from "src/endpoints/admins";
+import useFileHandler from "src/hooks/useFileHandler";
 import { useStore } from "src/store";
-import { wrapperStyle } from "./_utils";
+import { toCapitalize } from "src/utils/toCapitalize";
 
 interface IProfile {
-    name: string;
-    email: string;
-    username: string;
+  name: string;
+  email: string;
+  username: string;
 }
 
 const Profile = () => {
-    let toastId: Id;
-    const queryClient = useQueryClient();
-    const { adminData } = useStore();
-    const [file, setFile] = useState<File | null>(null);
-    const [image, setImage] = useState<string | null>();
-    const { setValue, control, handleSubmit } = useForm<IProfile>({
-        defaultValues: {
-            name: "",
-            email: "",
-            username: "",
-        },
-    });
+  let toastId: Id;
+  const queryClient = useQueryClient();
+  const { adminData } = useStore();
+  const { file, image, getInputProps, getRootProps, isDragActive } =
+    useFileHandler();
+  const { setValue, control, handleSubmit } = useForm<IProfile>({
+    defaultValues: {
+      name: "",
+      email: "",
+      username: "",
+    },
+  });
 
-    const { mutate, isLoading } = useMutation({
-        mutationFn: updateProfile,
-        onSuccess: () => {
-            queryClient.invalidateQueries(["profile"]);
-            toast.update(toastId, {
-                render: "Profile updated successfully!",
-                type: "success",
-                autoClose: 2000,
-                closeOnClick: true,
-                closeButton: true,
-            });
-            setTimeout(() => {
-                toast.dismiss(toastId as Id);
-            }, 2000);
-        },
-        onError: (error) => {
-            const err = error as Error;
-            toast.update(toastId as Id, {
-                render: err.message,
-                type: "error",
-                autoClose: 2000,
-                isLoading: false,
-                closeOnClick: true,
-                closeButton: true,
-            });
+  const { mutate, isLoading } = useMutation({
+    mutationFn: updateProfile,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["profile"]);
+      toast.update(toastId, {
+        render: "Profile updated successfully!",
+        type: "success",
+        autoClose: 2000,
+        closeOnClick: true,
+        closeButton: true,
+      });
+      setTimeout(() => {
+        toast.dismiss(toastId as Id);
+      }, 2000);
+    },
+    onError: (error) => {
+      const err = error as Error;
+      toast.update(toastId as Id, {
+        render: err.message,
+        type: "error",
+        autoClose: 2000,
+        isLoading: false,
+        closeOnClick: true,
+        closeButton: true,
+      });
 
-            setTimeout(() => {
-                toast.dismiss(toastId as Id);
-            }, 2000);
-        },
-    });
+      setTimeout(() => {
+        toast.dismiss(toastId as Id);
+      }, 2000);
+    },
+  });
 
-    useEffect(() => {
-        if (adminData) {
-            setValue("name", adminData?.name || "");
-            setValue("email", adminData?.email || "");
-            setValue("username", adminData?.username || "");
-        }
-    }, [adminData, setValue]);
+  useEffect(() => {
+    if (adminData) {
+      setValue("name", adminData?.name || "");
+      setValue("email", adminData?.email || "");
+      setValue("username", adminData?.username || "");
+    }
+  }, [adminData, setValue]);
 
-    const onDrop = useCallback((acceptedFiles: File[]) => {
-        acceptedFiles.forEach((file) => {
-            const reader = new FileReader();
+  const onSave = () => {
+    handleSubmit((data) => {
+      const formData = new FormData();
+      formData.append("name", data.name);
+      formData.append("email", data.email);
+      formData.append("username", data.username);
+      if (file) {
+        formData.append("avatar", file);
+      }
+      mutate(formData);
+      toastId = toast("Updating profile...", {
+        type: "info",
+        isLoading: true,
+        closeOnClick: false,
+        closeButton: false,
+      });
+    })();
+  };
 
-            reader.onabort = () => console.log("file reading was aborted");
-            reader.onerror = () => console.log("file reading has failed");
-            reader.onload = () => {
-                setFile(file);
-                setImage(URL.createObjectURL(file));
-            };
-            reader.readAsArrayBuffer(file);
-        });
-    }, []);
+  return (
+    <AnimateContainer
+      subtitle={toCapitalize(adminData?.username) ?? adminData?.name}
+      ActionButton={
+        <Button
+          variant="contained"
+          startIcon={
+            isLoading ? (
+              <CircularProgress size={14} color="inherit" />
+            ) : (
+              <Check />
+            )
+          }
+          onClick={onSave}
+        >
+          {isLoading ? "Processing..." : "Save"}
+        </Button>
+      }
+    >
+      <Box>
+        <Grid container spacing={1}>
+          <Grid item xs={12} md={3}>
+            <DropzoneContent
+              getRootProps={getRootProps}
+              getInputProps={getInputProps}
+              isDragActive={isDragActive}
+              image={image || adminData.avatar}
+              src={(image as string) ?? adminData.avatar}
+              containerStyle={(theme) => ({
+                height: "100%",
+                width: "100%",
+                overflow: "hidden",
+                position: "relative",
+                cursor: "pointer",
+                transition: "all 0.3s ease-in-out",
+                [theme.breakpoints.down("md")]: {
+                  height: 200,
+                },
+                "&:hover": {
+                  backgroundColor:
+                    theme.palette.mode === "light"
+                      ? theme.palette.grey[100]
+                      : theme.palette.grey[900],
+                },
+              })}
+            />
+          </Grid>
+          <Grid item xs={12} md={9}>
+            <Paper square sx={{ p: 2 }}>
+              <Box sx={{ p: 1 }}>
+                <Typography variant="h6" gutterBottom>
+                  Personal Information
+                </Typography>
+                <Box>
+                  <Controller
+                    name="name"
+                    control={control}
+                    render={({ field }) => (
+                      <TextField
+                        fullWidth
+                        label="Name"
+                        variant="outlined"
+                        sx={{ mb: 4 }}
+                        {...field}
+                      />
+                    )}
+                  />
 
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({
-        onDrop,
-        accept: {
-            "image/jpeg": [],
-            "image/png": [],
-            "image/jpg": [],
-            "image/webp": [],
-            "image/svg+xml": [],
-        },
-    });
+                  <Controller
+                    name="email"
+                    control={control}
+                    render={({ field }) => (
+                      <TextField
+                        fullWidth
+                        label="Email"
+                        variant="outlined"
+                        sx={{ mb: 4 }}
+                        {...field}
+                      />
+                    )}
+                  />
 
-    const onSave = () => {
-        handleSubmit((data) => {
-            const formData = new FormData();
-            formData.append("name", data.name);
-            formData.append("email", data.email);
-            formData.append("username", data.username);
-            if (file) {
-                formData.append("avatar", file);
-            }
-            mutate(formData);
-            toastId = toast("Updating profile...", {
-                type: "info",
-                isLoading: true,
-                closeOnClick: false,
-                closeButton: false,
-            });
-        })();
-    };
-
-    return (
-        <AnimateContainer>
-            <Box>
-                <Grid container justifyContent={"space-between"} alignItems="center" sx={{ mb: 2 }}>
-                    <Grid item>
-                        <Typography variant="h4">{adminData?.username ?? adminData?.name}</Typography>
-                    </Grid>
-                    <Grid item>
-                        <Button
-                            variant="contained"
-                            startIcon={isLoading ? <CircularProgress size={14} color="inherit" /> : <Check />}
-                            onClick={onSave}
-                        >
-                            {isLoading ? "Processing..." : "Save"}
-                        </Button>
-                    </Grid>
-                </Grid>
-                <Grid container spacing={1}>
-                    <Grid item xs={12} md={3}>
-                        <Paper
-                            square
-                            sx={(theme) => ({
-                                height: "100%",
-                                width: "100%",
-                                overflow: "hidden",
-                                position: "relative",
-                                cursor: "pointer",
-                                transition: "all 0.3s ease-in-out",
-                                [theme.breakpoints.down("md")]: {
-                                    height: 200,
-                                },
-                                "&:hover": {
-                                    backgroundColor: theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
-                                }
-                            })}
-                            {...getRootProps()}
-                            component="div"
-                        >
-                            <input {...getInputProps()} />
-                            {isDragActive ? (
-                                <Box
-                                    sx={{
-                                        ...wrapperStyle
-                                    }}
-                                >
-                                    <Typography variant="h6">Drop the files here ...</Typography>
-                                </Box>
-                            ) : (
-                                <Box
-                                    sx={{
-                                        ...wrapperStyle,
-                                        zIndex: 1,
-                                        wordWrap: "break-word",
-                                        textAlign: "center",
-                                        "& img": {
-                                            transition: "all 0.3s ease-in-out",
-                                            "&:hover": {
-                                                opacity: 0.9,
-                                            }
-                                        }
-                                    }}
-                                >
-                                    {image || adminData.avatar ? (
-                                        <img
-                                            src={(image as string) ?? adminData.avatar}
-                                            alt="profile"
-                                            style={{
-                                                width: "100%",
-                                                height: "100%",
-                                                objectFit: "cover",
-                                            }}
-                                        />
-                                    ) : (
-                                        <Typography variant="h6">
-                                            Drag 'n' drop some files here, or click to select files
-                                        </Typography>
-                                    )}
-                                </Box>
-                            )}
-                        </Paper>
-                    </Grid>
-                    <Grid item xs={12} md={9}>
-                        <Paper square sx={{ p: 2 }}>
-                            <Box sx={{ p: 1 }}>
-                                <Typography variant="h6" gutterBottom>
-                                    Personal Information
-                                </Typography>
-                                <Box>
-                                    <Controller
-                                        name="name"
-                                        control={control}
-                                        render={({ field }) => (
-                                            <TextField
-                                                fullWidth
-                                                label="Name"
-                                                variant="outlined"
-                                                sx={{ mb: 4 }}
-                                                {...field}
-                                            />
-                                        )}
-                                    />
-
-                                    <Controller
-                                        name="email"
-                                        control={control}
-                                        render={({ field }) => (
-                                            <TextField
-                                                fullWidth
-                                                label="Email"
-                                                variant="outlined"
-                                                sx={{ mb: 4 }}
-                                                {...field}
-                                            />
-                                        )}
-                                    />
-
-                                    <Controller
-                                        name="username"
-                                        control={control}
-                                        render={({ field }) => (
-                                            <TextField
-                                                fullWidth
-                                                label="Username"
-                                                variant="outlined"
-                                                sx={{ mb: 4 }}
-                                                {...field}
-                                            />
-                                        )}
-                                    />
-                                </Box>
-                            </Box>
-                        </Paper>
-                    </Grid>
-                </Grid>
-                <Box sx={{ mt: 12, mb: 10, display: "grid", placeItems: "center" }}>
-                    <Button
-                        startIcon={<Delete />}
-                        color="error"
-                        variant="contained"
-                        disableElevation
-                        size="large"
-                    >
-                        Delete Account
-                    </Button>
+                  <Controller
+                    name="username"
+                    control={control}
+                    render={({ field }) => (
+                      <TextField
+                        fullWidth
+                        label="Username"
+                        variant="outlined"
+                        sx={{ mb: 4 }}
+                        {...field}
+                      />
+                    )}
+                  />
                 </Box>
-            </Box>
-        </AnimateContainer>
-    );
+              </Box>
+            </Paper>
+          </Grid>
+        </Grid>
+        <Box sx={{ mt: 12, mb: 10, display: "grid", placeItems: "center" }}>
+          <Button
+            startIcon={<Delete />}
+            color="error"
+            variant="contained"
+            disableElevation
+            size="large"
+          >
+            Delete Account
+          </Button>
+        </Box>
+      </Box>
+    </AnimateContainer>
+  );
 };
 
 export default Profile;

@@ -1,5 +1,6 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import CustomCircularProgress from "./shared/CustomCircularProgress";
+import EllipsisAnim from "./shared/EllipsisAnim";
 
 const PageLoader = () => {
   return (
@@ -8,10 +9,23 @@ const PageLoader = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "100vh",
+        height: "80vh",
+        flexDirection: "column",
       }}
     >
       <CustomCircularProgress />
+      <Typography
+        sx={{
+          letterSpacing: 2.2,
+          textAlign: "center",
+          display: "inline-block",
+          textTransform: "uppercase",
+          fontSize: "0.9rem",
+        }}
+      >
+        Loading
+        <EllipsisAnim />
+      </Typography>
     </Box>
   );
 };

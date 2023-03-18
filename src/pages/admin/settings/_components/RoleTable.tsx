@@ -4,7 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { useEffect, useMemo, memo } from "react";
 import { toast } from "react-toastify";
-import { getAdminCounts } from "../../../../endpoints/getAdminCounts";
+import { getAdminCounts } from "src/endpoints/auth";
+
 
 const MemoizedRow = memo(GridRow);
 const MemoizedColumnHeaders = memo(GridColumnHeaders);

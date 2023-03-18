@@ -3,7 +3,6 @@ import { NavigateFunction } from "react-router-dom";
 
 axios.defaults.baseURL = process.env.BASE_URL || "http://localhost:3000";
 export const token = localStorage.getItem("auth_token");
-
 axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
 export const logout = (navigate: NavigateFunction, resetState: () => void) => {
@@ -14,6 +13,7 @@ export const logout = (navigate: NavigateFunction, resetState: () => void) => {
 
 export const setToken = (token: string) => {
   localStorage.setItem("auth_token", token);
+  axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 };
 
 export default axios;

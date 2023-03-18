@@ -29,12 +29,13 @@ import { toast } from "react-toastify";
 
 import { Drawer, DrawerHeader, lisItemStyle, styledList } from "./utils";
 import { ReactComponent as CollectionIcon } from "./icons/collection.svg";
-import { getProfile } from "../../endpoints/getProfile";
 import { logout } from "../../endpoints/services/axiosService";
 import { useStore } from "../../store";
 import { ColorModeContext } from "../../App";
 import { dashboardLinks, generalLinks } from "./links";
 import PopupMenu from "./PopupMenu";
+import { getProfile } from "src/endpoints/auth";
+
 
 const Indicator = ({ variants }: { variants: any }) => (
   <motion.div
