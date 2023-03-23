@@ -1,7 +1,7 @@
 import React from "react";
 
 import CustomTable from "src/components/CustomTable";
-import ConfirmDialog from "src/components/shared/ComfirmDialog";
+import ConfirmDialog from "src/components/shared/ConfirmDialog";
 import { adminActions } from "src/utils/adminActions";
 import useMutate from "../_hooks/useMutate";
 import DeleteManyAdmins from "./DeleteManyAdmins";

@@ -5,7 +5,7 @@ import { Box, Button } from "@mui/material";
 import CustomTable from "src/components/CustomTable";
 import PageLoader from "src/components/PageLoader";
 import AnimateContainer from "src/components/shared/AnimateContainer";
-import ConfirmDialog from "src/components/shared/ComfirmDialog";
+import ConfirmDialog from "src/components/shared/ConfirmDialog";
 import { adminActions } from "src/utils/adminActions";
 import AddBrandModal from "./_components/AddBrandModal";
 import useBrand from "./_hooks/useBrand";

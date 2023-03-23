@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast, Id } from "react-toastify";
 import { deleteAdmin } from "src/endpoints/admins";
-import ConfirmDialog from "src/components/shared/ComfirmDialog";
+import ConfirmDialog from "src/components/shared/ConfirmDialog";
 
 interface IDeleteAdminProps {
   id: string;

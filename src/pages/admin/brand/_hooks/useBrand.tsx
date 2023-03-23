@@ -1,22 +1,16 @@
-import { Close, DeleteForeverOutlined, Edit, Save } from "@mui/icons-material";
 import { Button, useMediaQuery } from "@mui/material";
 import {
-  GridActionsCellItem,
   GridRowModel,
-  GridRowParams,
   GridValueFormatterParams,
-  MuiEvent,
   GridRenderEditCellParams,
-  GridRowId,
-  GridRowModes,
-  GridRowModesModel,
-  GridEventListener,
 } from "@mui/x-data-grid";
 import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import moment from "moment";
 import { useMemo, useEffect, useState, useCallback, useRef } from "react";
 import { toast, Id } from "react-toastify";
+import { getActions } from "src/components/shared/getActions";
 import { deleteBrand, getAllBrands, updateBrand } from "src/endpoints/brands";
+import useTableEdit from "src/hooks/useTableEdit";
 import { useStore } from "src/store";
 import type { Brand as IBrand } from "src/types";
 
@@ -24,11 +18,20 @@ const useBrand = () => {
   const queryClient = new QueryClient();
   let toastId = useRef<Id | null>(null);
   const matches = useMediaQuery("(min-width:600px)");
+  const {
+    rowModesModel,
+    setRowModesModel,
+    handleRowModesModelChange,
+    handleRowEditStart,
+    handleRowEditStop,
+    handleEditClick,
+    handleSaveClick,
+    handleCancelClick,
+  } = useTableEdit();
   const [open, setOpen] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [brandId, setBrandId] = useState<string | null>(null);
   const { adminData } = useStore();
-  const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
   const { data, isLoading, error } = useQuery<IBrand[]>(
     ["brands"],
     getAllBrands
@@ -104,21 +107,6 @@ const useBrand = () => {
   }, [error]);
 
   const columns = useMemo(() => {
-    const handleEditClick = (id: GridRowId) => () => {
-      setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
-    };
-
-    const handleSaveClick = (id: GridRowId) => () => {
-      setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-    };
-
-    const handleCancelClick = (id: GridRowId) => () => {
-      setRowModesModel({
-        ...rowModesModel,
-        [id]: { mode: GridRowModes.View, ignoreModifications: true },
-      });
-    };
-
     const handleOpenConfirm = (id: string) => {
       setOpenConfirm(true);
       setBrandId(id);
@@ -201,46 +189,24 @@ const useBrand = () => {
         flex: matches ? 1 : 0,
         sortable: false,
         filterable: false,
-        getActions: ({ id }: { id: string }) => {
-          const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-
-          if (isInEditMode) {
-            return [
-              <GridActionsCellItem
-                icon={<Save fontSize="large" />}
-                label="Save"
-                onClick={handleSaveClick(id)}
-                color="info"
-              />,
-              <GridActionsCellItem
-                icon={<Close fontSize="large" />}
-                label="Cancel"
-                className="textPrimary"
-                onClick={handleCancelClick(id)}
-                color="secondary"
-              />,
-            ];
-          }
-          return [
-            <GridActionsCellItem
-              icon={<Edit color="info" fontSize="large" />}
-              label="Edit"
-              onClick={handleEditClick(id)}
-              className="textPrimary"
-              color="inherit"
-            />,
-            <GridActionsCellItem
-              icon={<DeleteForeverOutlined color="error" fontSize="large" />}
-              label="Delete"
-              onClick={() => handleOpenConfirm(id)}
-              className="textPrimary"
-              color="error"
-            />,
-          ];
-        },
+        getActions: ({ id }: { id: string }) =>
+          getActions({
+            id,
+            handleEditClick,
+            handleSaveClick,
+            handleCancelClick,
+            handleOpenConfirm,
+            rowModesModel,
+          }),
       },
     ];
-  }, [matches, rowModesModel]);
+  }, [
+    matches,
+    rowModesModel,
+    handleEditClick,
+    handleSaveClick,
+    handleCancelClick,
+  ]);
 
   const processRowUpdate = useCallback(
     async (newRow: GridRowModel, oldRow: GridRowModel) => {
@@ -266,27 +232,6 @@ const useBrand = () => {
   const handleCloseConfirm = useCallback(() => {
     setOpenConfirm(false);
   }, []);
-
-  const handleRowModesModelChange = useCallback(
-    (newRowModesModel: GridRowModesModel) => {
-      setRowModesModel(newRowModesModel);
-    },
-    []
-  );
-
-  const handleRowEditStart = useCallback(
-    (params: GridRowParams, event: MuiEvent<React.SyntheticEvent>) => {
-      event.defaultMuiPrevented = true;
-    },
-    []
-  );
-
-  const handleRowEditStop: GridEventListener<"rowEditStop"> = useCallback(
-    (params, event) => {
-      event.defaultMuiPrevented = true;
-    },
-    []
-  );
 
   const handleConfirm = useCallback(async () => {
     toastId.current = toast.loading("Deleting brand...");

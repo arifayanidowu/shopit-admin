@@ -5,8 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { deleteAdmins } from "src/endpoints/admins";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast, Id } from "react-toastify";
-import ConfirmDialog from "src/components/shared/ComfirmDialog";
-
+import ConfirmDialog from "src/components/shared/ConfirmDialog";
 
 const DeleteManyAdmins = ({
   entries,
@@ -46,12 +45,12 @@ const DeleteManyAdmins = ({
       setTimeout(() => {
         toast.dismiss(toastId.current as Id);
       }, 2000);
-    }
-  })
+    },
+  });
 
   const handleCloseConfirm = () => {
     setOpenConfirm(false);
-  }
+  };
   return (
     <>
       <ConfirmDialog

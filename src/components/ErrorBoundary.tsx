@@ -1,7 +1,7 @@
 import { Box, Button, Typography } from "@mui/material";
 import { Link, useRouteError } from "react-router-dom";
 
-function ErrorBoundary() {
+function ErrorBoundary({ resetErrorBoundary }: { resetErrorBoundary?: any }) {
   let error = useRouteError() as any;
 
   return (
@@ -53,6 +53,9 @@ function ErrorBoundary() {
           variant="contained"
           disableElevation
           onClick={() => {
+            if (resetErrorBoundary) {
+              resetErrorBoundary();
+            }
             window.history.back();
           }}
         >

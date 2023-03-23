@@ -1,5 +1,11 @@
 import React from "react";
-import { Box, Button, CssBaseline, ThemeProvider } from "@mui/material";
+import {
+  Box,
+  Button,
+  CssBaseline,
+  ThemeProvider,
+  Typography,
+} from "@mui/material";
 import { RouterProvider } from "react-router-dom";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useQueryErrorResetBoundary } from "@tanstack/react-query";
@@ -8,9 +14,8 @@ import { ToastContainer } from "react-toastify";
 import useMode from "./hooks/useMode";
 import router from "./routes/router";
 
-
 export const ColorModeContext = React.createContext({
-  toggleColorMode: () => { },
+  toggleColorMode: () => {},
 });
 
 function App() {
@@ -21,9 +26,28 @@ function App() {
     <ErrorBoundary
       onReset={reset}
       fallbackRender={({ resetErrorBoundary }: { resetErrorBoundary: any }) => (
-        <Box>
-          There was an error!
-          <Button onClick={() => resetErrorBoundary()}>Try again</Button>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            flexDirection: "column",
+            height: "80vh",
+            justifyContent: "center",
+          }}
+        >
+          <Typography>Oops, There was an error!</Typography>
+          <Button
+            onClick={() => resetErrorBoundary()}
+            variant="contained"
+            disableElevation
+            sx={{
+              bgcolor: "#000",
+              color: "#fff",
+              borderRadius: 0,
+            }}
+          >
+            Try again
+          </Button>
         </Box>
       )}
     >
