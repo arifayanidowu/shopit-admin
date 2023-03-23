@@ -12,19 +12,19 @@ import {
   TextField,
 } from "@mui/material";
 import { Controller } from "react-hook-form";
-import DropzoneContent from "src/components/shared/DropzoneContent";
-import { createBrand } from "src/endpoints/brands";
-import useFileHandler from "src/hooks/useFileHandler";
 import useFormMutation from "src/hooks/useFormMutation";
-
-import type { Brand } from "src/types";
+import { createCategory } from "../../../endpoints/category";
 
 interface IProps {
   open: boolean;
   handleClose: () => void;
 }
 
-const AddBrandModal = ({ open, handleClose }: IProps) => {
+type TCategoryInput = {
+  name: string;
+};
+
+const CreateCategoryModal = ({ open, handleClose }: IProps) => {
   const {
     mutate,
     isLoading,
@@ -35,34 +35,28 @@ const AddBrandModal = ({ open, handleClose }: IProps) => {
     reset,
     toastId,
     toast,
-  } = useFormMutation<Brand>({
-    mutationFn: createBrand,
-    queryKeys: ["brands"],
-    successMessage: "Brand created successfully!",
+  } = useFormMutation<TCategoryInput>({
+    mutationFn: createCategory,
+    queryKeys: ["category"],
+    successMessage: "Category created successfully!",
     defaultValues: {
       name: "",
     },
   });
-  const { file, image, getInputProps, getRootProps, isDragActive } =
-    useFileHandler();
-  const onSubmit = (data: Brand) => {
-    toastId.current = toast.loading("Creating brand...");
-    const formData = new FormData();
-    formData.append("name", data.name);
-    if (file) {
-      formData.append("logo", file as Blob);
-    }
-    mutate(formData as any);
-    reset();
+
+  const onSubmit = (data: TCategoryInput) => {
+    toastId.current = toast.loading("Creating category...");
     handleClose();
+    mutate(data);
+    reset();
   };
 
   return (
     <Dialog
       open={open}
       onClose={handleClose}
-      aria-labelledby="add-brand-modal"
-      aria-describedby="add-brand-modal"
+      aria-labelledby="add-category-modal"
+      aria-describedby="add-category-modal"
       fullWidth
       maxWidth="sm"
       role="dialog"
@@ -75,28 +69,20 @@ const AddBrandModal = ({ open, handleClose }: IProps) => {
           alignItems: "center",
         }}
       >
-        <DialogContentText>Add Brand</DialogContentText>
+        <DialogContentText>Add Category</DialogContentText>
         <IconButton onClick={handleClose}>
           <Close />
         </IconButton>
       </DialogTitle>
       <Paper component="form" onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
-          <DropzoneContent
-            getInputProps={getInputProps}
-            getRootProps={getRootProps}
-            isDragActive={isDragActive}
-            image={image as string}
-            src={image as string}
-            containerStyle={{ height: 200, mb: 2 }}
-          />
           <Controller
-            name="name"
             control={control}
+            name="name"
             render={({ field }) => (
               <TextField
                 variant="outlined"
-                placeholder="Enter Name"
+                placeholder="Enter category Name"
                 label="Name"
                 fullWidth
                 required
@@ -128,4 +114,4 @@ const AddBrandModal = ({ open, handleClose }: IProps) => {
   );
 };
 
-export default AddBrandModal;
+export default CreateCategoryModal;

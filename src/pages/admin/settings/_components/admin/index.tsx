@@ -36,7 +36,7 @@ const Admin = () => {
           <Typography variant="h4">Admins</Typography>
         </Grid>
         <Grid item>
-          {adminActions(adminData, "Create") !== false ? (
+          {adminActions(adminData, "Create") ? (
             <Button
               variant="contained"
               color="primary"

@@ -10,7 +10,12 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import {
+  Outlet,
+  useLocation,
+  useNavigate,
+  type Location,
+} from "react-router-dom";
 import {
   AppBar,
   Avatar,
@@ -32,10 +37,9 @@ import { ReactComponent as CollectionIcon } from "./icons/collection.svg";
 import { logout } from "../../endpoints/services/axiosService";
 import { useStore } from "../../store";
 import { ColorModeContext } from "../../App";
-import { dashboardLinks, generalLinks } from "./links";
+import { dashboardLinks, generalLinks, settingsLinks } from "./links";
 import PopupMenu from "./PopupMenu";
 import { getProfile } from "src/endpoints/auth";
-
 
 const Indicator = ({ variants }: { variants: any }) => (
   <motion.div
@@ -54,6 +58,51 @@ const Indicator = ({ variants }: { variants: any }) => (
   />
 );
 
+interface NavLinkItemProps {
+  open: boolean;
+  location: Location;
+  item: any;
+  navigate: (path: string) => void;
+  variants: Record<string, any>;
+  extraStyle?: Record<string, any>;
+}
+
+const NavLinkItem = ({
+  open,
+  location,
+  item,
+  navigate,
+  variants,
+  extraStyle,
+}: NavLinkItemProps) => {
+  return (
+    <ListItem disablePadding sx={{ display: "block" }}>
+      <ListItemButton
+        sx={(theme) => ({
+          ...lisItemStyle(theme, open, location, item),
+        })}
+        onClick={() => navigate(item.href)}
+      >
+        <ListItemIcon
+          sx={{
+            minWidth: 0,
+            justifyContent: "center",
+            ...extraStyle,
+          }}
+        >
+          {item.icon}
+        </ListItemIcon>
+        <ListItemText primary={item.label} sx={{ ...styledList(open) }} />
+        {location?.pathname === item.href && (
+          <AnimatePresence>
+            <Indicator variants={variants} />
+          </AnimatePresence>
+        )}
+      </ListItemButton>
+    </ListItem>
+  );
+};
+
 export default function AdminLayout() {
   const theme = useTheme();
   const location = useLocation();
@@ -64,10 +113,7 @@ export default function AdminLayout() {
   const { toggleColorMode } = React.useContext(ColorModeContext);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
-  const { data, isLoading, isError, error } = useQuery(
-    ["profile"],
-    getProfile,
-  );
+  const { data, isLoading, isError, error } = useQuery(["profile"], getProfile);
   const navigate = useNavigate();
   const token = localStorage.getItem("auth_token");
 
@@ -185,39 +231,20 @@ export default function AdminLayout() {
         <Box>
           <List>
             {dashboardLinks().map((item) => (
-              <ListItem
+              <NavLinkItem
                 key={item.label}
-                disablePadding
-                sx={{ display: "block", mt: 1 }}
-              >
-                <ListItemButton
-                  sx={(theme) => ({
-                    ...lisItemStyle(theme, open, location, item),
-                  })}
-                  onClick={() => navigate(item.href)}
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      justifyContent: "center",
-                      transition: "all 0.5s ease-in-out",
-                      ml: open ? 0 : -0.24,
-                    }}
-                  >
-                    {item.icon}
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={item.label}
-                    sx={{ ...styledList(open) }}
-                    color="text.primary.light"
-                  />
-                  {location?.pathname === item.href && (
-                    <AnimatePresence>
-                      <Indicator variants={dividerVariant} />
-                    </AnimatePresence>
-                  )}
-                </ListItemButton>
-              </ListItem>
+                {...{
+                  open,
+                  location,
+                  item,
+                  navigate,
+                  variants: dividerVariant,
+                }}
+                extraStyle={{
+                  transition: "all 0.5s ease-in-out",
+                  ml: open ? 0 : -0.24,
+                }}
+              />
             ))}
           </List>
 
@@ -283,42 +310,33 @@ export default function AdminLayout() {
                   <AnimatePresence mode="sync">
                     <motion.div variants={itemVariants}>
                       {generalLinks().map((item) => (
-                        <ListItem
-                          disablePadding
-                          sx={{ display: "block" }}
+                        <NavLinkItem
                           key={item.label}
-                        >
-                          <ListItemButton
-                            sx={(theme) => ({
-                              ...lisItemStyle(theme, open, location, item),
-                            })}
-                            onClick={() => navigate(item.href)}
-                          >
-                            <ListItemIcon
-                              sx={{
-                                minWidth: 0,
-                                // mr: open ? 3 : "auto",
-                                justifyContent: "center",
-                              }}
-                            >
-                              {item.icon}
-                            </ListItemIcon>
-                            <ListItemText
-                              primary={item.label}
-                              sx={{ ...styledList(open) }}
-                            />
-                            {location?.pathname === item.href && (
-                              <AnimatePresence>
-                                <Indicator variants={dividerVariant} />
-                              </AnimatePresence>
-                            )}
-                          </ListItemButton>
-                        </ListItem>
+                          {...{
+                            open,
+                            location,
+                            item,
+                            navigate,
+                            variants: dividerVariant,
+                          }}
+                        />
                       ))}
                     </motion.div>
                   </AnimatePresence>
                 </motion.div>
               </Collapse>
+              {settingsLinks().map((item) => (
+                <NavLinkItem
+                  key={item.label}
+                  {...{
+                    open,
+                    location,
+                    item,
+                    navigate,
+                    variants: dividerVariant,
+                  }}
+                />
+              ))}
             </motion.div>
           </List>
         </Box>
@@ -341,7 +359,13 @@ export default function AdminLayout() {
               </Typography>
               <IconButton
                 aria-label="User's Avatar"
-                sx={(theme) => ({ mr: 2, bgcolor: theme.palette.mode === 'light' ? "rgba(0,0,0,0.02)" : "rgba(255,255,255,0.03)" })}
+                sx={(theme) => ({
+                  mr: 2,
+                  bgcolor:
+                    theme.palette.mode === "light"
+                      ? "rgba(0,0,0,0.02)"
+                      : "rgba(255,255,255,0.03)",
+                })}
                 onClick={handleClick}
               >
                 {adminData.avatar ? (

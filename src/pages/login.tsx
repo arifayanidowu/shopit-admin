@@ -9,25 +9,32 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { Id, toast } from "react-toastify";
 import { authLogin } from "src/endpoints/auth";
+import useFormMutation from "src/hooks/useFormMutation";
 import { useStore } from "../store";
 
 const Login = () => {
+  const token = localStorage.getItem("auth_token");
   const navigate = useNavigate();
   const theme = useTheme();
   const { setAdminData } = useStore();
-  let toastId: Id;
-  const token = localStorage.getItem("auth_token");
   const {
-    control,
+    mutate,
+    isLoading,
+    validationErrors,
     handleSubmit,
-    formState: { errors },
-  } = useForm({
+    control,
+    register,
+    reset,
+    toastId,
+    toast,
+  } = useFormMutation({
+    mutationFn: authLogin,
+    queryKeys: ["auth"],
+    successMessage: "Logged in successfully!",
     defaultValues: {
       email: "",
     },
@@ -46,6 +53,8 @@ const Login = () => {
         errors,
       };
     },
+    navigate,
+    path: "/email/verification",
   });
 
   useEffect(() => {
@@ -54,43 +63,13 @@ const Login = () => {
     }
   }, [navigate, token]);
 
-  const { mutate, isLoading } = useMutation(authLogin, {
-    onSuccess: (data) => {
-      toast.update(toastId, {
-        render: "Logged in successfully!",
-        type: "success",
-        autoClose: 2000,
-        closeOnClick: true,
-        closeButton: true,
-      });
-      navigate("/email/verification");
-
-      setTimeout(() => {
-        toast.dismiss(toastId);
-      }, 2000);
-    },
-    onError: (error) => {
-      const err = error as any;
-      toast.update(toastId, {
-        render: err.message,
-        type: "error",
-        autoClose: 2000,
-        isLoading: false,
-        closeOnClick: true,
-        closeButton: true,
-      });
-      setTimeout(() => {
-        toast.dismiss(toastId);
-      }, 2000);
-    },
-  });
-
   const onSubmit = ({ email }: { email: string }) => {
-    toastId = toast.loading("Logging in...");
+    toastId.current = toast.loading("Logging in...");
     setAdminData({
       email,
     });
     mutate(email);
+    reset();
   };
 
   return (
@@ -161,8 +140,11 @@ const Login = () => {
                         variant="outlined"
                         fullWidth
                         {...field}
-                        helperText={errors?.email?.message}
-                        error={!!errors.email}
+                        {...register("email", {
+                          required: "Email is required",
+                        })}
+                        helperText={validationErrors?.email?.message}
+                        error={!!validationErrors.email}
                       />
                     )}
                   />

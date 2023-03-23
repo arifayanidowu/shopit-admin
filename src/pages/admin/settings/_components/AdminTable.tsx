@@ -52,7 +52,7 @@ const AdminTable = ({
         rowSelectionModel={entries}
         processRowUpdate={processRowUpdate}
         onProcessRowUpdateError={handleOnProcessRowUpdateError}
-        checkboxSelection={adminData.role === "SuperAdmin"}
+        checkboxSelection={adminActions(adminData, "Delete")}
         onOpenModal={() => setOpenModal(true)}
         initialState={{
           pagination: { paginationModel: { pageSize: 5 } },

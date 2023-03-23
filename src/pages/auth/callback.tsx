@@ -1,20 +1,26 @@
-import { Box, Button, Card, CardContent, SvgIcon, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  SvgIcon,
+  Typography,
+} from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import PageLoader from "src/components/PageLoader";
 import { getMagicToken } from "src/endpoints/auth";
-import { ReactComponent as UnauthorizedIcon } from './_svgs/unauthorized.svg'
-
-
+import { ReactComponent as UnauthorizedIcon } from "./_svgs/unauthorized.svg";
 
 const AuthCallback = () => {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
   const navigate = useNavigate();
 
-  const { isLoading, isSuccess, isError } = useQuery(["magicToken"], () =>
-    getMagicToken(token!),
+  const { isLoading, isSuccess, isError } = useQuery(
+    ["magicToken"],
+    () => getMagicToken(token!),
     {
       enabled: !!token,
       retry: false,
@@ -34,9 +40,9 @@ const AuthCallback = () => {
     if (token) {
       navigate("/admin/dashboard");
     }
-  }, [navigate])
+  }, [navigate]);
 
-  if (isLoading) return <PageLoader />
+  if (isLoading) return <PageLoader />;
 
   if (isError) {
     return (
@@ -56,19 +62,28 @@ const AuthCallback = () => {
               textAlign: "center",
             }}
           >
-            <SvgIcon component={UnauthorizedIcon} inheritViewBox fontSize="large" sx={{
-              fontSize: '8rem',
-            }} />
+            <SvgIcon
+              component={UnauthorizedIcon}
+              inheritViewBox
+              fontSize="large"
+              sx={{
+                fontSize: "8rem",
+              }}
+            />
             <Typography variant="h3">Token has expired/broken</Typography>
-            <Button onClick={() => {
-              navigate("/");
-            }}>
+            <Button
+              onClick={() => {
+                navigate("/");
+              }}
+              color="primary"
+              variant="contained"
+            >
               Login Again
             </Button>
           </CardContent>
         </Card>
       </Box>
-    )
+    );
   }
 
   return (

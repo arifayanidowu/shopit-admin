@@ -34,7 +34,29 @@ const Brand = () => {
   if (isLoading) return <PageLoader />;
 
   return (
-    <>
+    <AnimateContainer
+      title="Brands"
+      subtitle="List of Brands"
+      ActionButton={
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={
+            <FontAwesomeIcon
+              icon={faPlus}
+              style={{
+                fontSize: "1rem",
+              }}
+              aria-hidden="true"
+              opacity={0.5}
+            />
+          }
+          onClick={handleOpen}
+        >
+          Add Brand
+        </Button>
+      }
+    >
       <AddBrandModal {...{ open, handleClose }} />
       <ConfirmDialog
         open={openConfirm}
@@ -42,66 +64,43 @@ const Brand = () => {
         message={`Are you sure you want to delete brand with ID: ${brandId}`}
         onConfirm={handleConfirm}
       />
-      <AnimateContainer
-        title="Brands"
-        subtitle="List of Brands"
-        ActionButton={
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={
-              <FontAwesomeIcon
-                icon={faPlus}
-                style={{
-                  fontSize: "1rem",
-                }}
-                aria-hidden="true"
-                opacity={0.5}
-              />
-            }
-            onClick={handleOpen}
-          >
-            Add Brand
-          </Button>
-        }
+      <Box
+        sx={{
+          "& .actions": {
+            color: "text.secondary",
+          },
+          "& .textPrimary": {
+            color: "text.primary",
+          },
+        }}
       >
-        <Box
-          sx={{
-            "& .actions": {
-              color: "text.secondary",
-            },
-            "& .textPrimary": {
-              color: "text.primary",
+        <CustomTable
+          rows={data!}
+          columns={columns}
+          loading={isLoading}
+          checkboxSelection={false}
+          editMode="row"
+          processRowUpdate={processRowUpdate}
+          rowModesModel={rowModesModel}
+          onRowModesModelChange={handleRowModesModelChange}
+          onRowEditStart={handleRowEditStart}
+          onRowEditStop={handleRowEditStop}
+          slotProps={{
+            toolbar: { setRowModesModel },
+          }}
+          initialState={{
+            pagination: { paginationModel: { pageSize: 5 } },
+            columns: {
+              columnVisibilityModel: {
+                id: false,
+                actions: adminActions(adminData, "Delete"),
+              },
             },
           }}
-        >
-          <CustomTable
-            rows={data!}
-            columns={columns}
-            loading={isLoading}
-            checkboxSelection={false}
-            editMode="row"
-            processRowUpdate={processRowUpdate}
-            rowModesModel={rowModesModel}
-            onRowModesModelChange={handleRowModesModelChange}
-            onRowEditStart={handleRowEditStart}
-            onRowEditStop={handleRowEditStop}
-            slotProps={{
-              toolbar: { setRowModesModel },
-            }}
-            initialState={{
-              pagination: { paginationModel: { pageSize: 5 } },
-              columns: {
-                columnVisibilityModel: {
-                  id: false,
-                  actions: adminActions(adminData, "Delete"),
-                },
-              },
-            }}
-          />
-        </Box>
-      </AnimateContainer>
-    </>
+          onOpenModal={handleOpen}
+        />
+      </Box>
+    </AnimateContainer>
   );
 };
 

@@ -73,15 +73,6 @@ const CustomTable = ({
         rows={rows}
         columns={columns}
         initialState={initialState}
-        // initialState={{
-        //   ...initialState,
-        //   pagination: { paginationModel: { pageSize: 5 } },
-        //   columns: {
-        //     columnVisibilityModel: {
-        //       id: false,
-        //     },
-        //   },
-        // }}
         editMode={editMode}
         rowModesModel={rowModesModel}
         onRowModesModelChange={onRowModesModelChange}

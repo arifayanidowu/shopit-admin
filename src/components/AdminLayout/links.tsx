@@ -54,6 +54,11 @@ export const generalLinks = () => {
       label: "Promotion",
       href: "/admin/promotion",
     },
+  ];
+};
+
+export const settingsLinks = () => {
+  return [
     {
       icon: <SvgIcon component={SettingIcons} inheritViewBox opacity={0.5} />,
       label: "Settings",

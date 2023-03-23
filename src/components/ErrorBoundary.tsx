@@ -36,7 +36,13 @@ function ErrorBoundary() {
           />
         )}
         <Typography variant="h4">Oops</Typography>
-        <Typography variant="h6">An unexpected error has occurred: {error.statusText}</Typography>
+        <Typography variant="h6">An unexpected error has occurred</Typography>
+        <Typography component={"details"}>
+          <summary>Details</summary>
+          <span>Status: {error.statusText}</span>
+          <br />
+          {error.error.message}
+        </Typography>
         <Typography variant="h6" color="error.main">
           {error.status}
         </Typography>

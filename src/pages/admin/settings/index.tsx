@@ -63,6 +63,7 @@ const Settings = () => {
                             ? "rgba(0, 0, 0, 0.04)"
                             : "rgba(225, 225, 225, 0.08)"
                           : "transparent",
+                      mb: 1,
                     })}
                     onClick={() => setShowView("user")}
                   >
@@ -75,7 +76,8 @@ const Settings = () => {
         </Grid>
         <Grid item xs={12} md={10} sx={{ width: "100%", overflow: "hidden" }}>
           <AnimatePresence mode="wait">
-            {showView === "role" ? <RoleTable /> : <Admin />}
+            {showView === "role" && <RoleTable />}
+            {showView === "user" && <Admin />}
           </AnimatePresence>
         </Grid>
       </Grid>

@@ -4,6 +4,7 @@ import {
   Route,
 } from "react-router-dom";
 import Brand from "src/pages/admin/brand";
+import Category from "src/pages/admin/category";
 import Profile from "src/pages/admin/profile";
 import AdminLayout from "../components/AdminLayout";
 import ErrorBoundary from "../components/ErrorBoundary";
@@ -27,23 +28,16 @@ const router = createBrowserRouter(
         element={<EmailVerify />}
         errorElement={<ErrorBoundary />}
       />
-      <Route path="admin" element={<AdminLayout />} errorElement={<ErrorBoundary />}>
-        <Route
-          path="dashboard"
-          element={<Dashboard />}
-        />
-        <Route
-          path="settings"
-          element={<Settings />}
-        />
-        <Route
-          path="profile"
-          element={<Profile />}
-        />
-        <Route
-          path="brand"
-          element={<Brand />}
-        />
+      <Route
+        path="admin"
+        element={<AdminLayout />}
+        errorElement={<ErrorBoundary />}
+      >
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="settings" element={<Settings />} />
+        <Route path="profile" element={<Profile />} />
+        <Route path="brand" element={<Brand />} />
+        <Route path="category" element={<Category />} />
       </Route>
     </>
   )
