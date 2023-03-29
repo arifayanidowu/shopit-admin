@@ -8,6 +8,7 @@ import { adminActions } from "src/utils/adminActions";
 interface AnimateContainerProps {
   children: React.ReactNode;
   title?: string;
+  salutation?: string;
   subtitle?: string;
   ActionButton?: React.ReactNode;
 }
@@ -15,6 +16,7 @@ interface AnimateContainerProps {
 const AnimateContainer = ({
   children,
   title,
+  salutation,
   subtitle,
   ActionButton,
 }: AnimateContainerProps) => {
@@ -60,6 +62,7 @@ const AnimateContainer = ({
         key={location.pathname}
       >
         <motion.div variants={item}>
+          <Typography>{salutation}</Typography>
           <Typography variant="h3" gutterBottom fontWeight="bold">
             {title}
           </Typography>
@@ -77,9 +80,7 @@ const AnimateContainer = ({
               </Typography>
             </Grid>
             <Grid item>
-              {adminActions(adminData, "Create") !== false
-                ? ActionButton
-                : null}
+              {adminActions(adminData, "Create") ? ActionButton : null}
             </Grid>
           </Grid>
           {children}

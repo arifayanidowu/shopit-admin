@@ -15,10 +15,11 @@ import { toast, Id } from "react-toastify";
 
 import AnimateContainer from "src/components/shared/AnimateContainer";
 import DropzoneContent from "src/components/shared/DropzoneContent";
+import EllipsisAnim from "src/components/shared/EllipsisAnim";
 import { updateProfile } from "src/endpoints/admins";
 import useFileHandler from "src/hooks/useFileHandler";
 import { useStore } from "src/store";
-import { toCapitalize } from "src/utils/toCapitalize";
+import { toastOptions, toCapitalize } from "src/utils";
 
 interface IProfile {
   name: string;
@@ -47,28 +48,16 @@ const Profile = () => {
       toast.update(toastId, {
         render: "Profile updated successfully!",
         type: "success",
-        autoClose: 2000,
-        closeOnClick: true,
-        closeButton: true,
+        ...toastOptions,
       });
-      setTimeout(() => {
-        toast.dismiss(toastId as Id);
-      }, 2000);
     },
     onError: (error) => {
       const err = error as Error;
       toast.update(toastId as Id, {
         render: err.message,
         type: "error",
-        autoClose: 2000,
-        isLoading: false,
-        closeOnClick: true,
-        closeButton: true,
+        ...toastOptions,
       });
-
-      setTimeout(() => {
-        toast.dismiss(toastId as Id);
-      }, 2000);
     },
   });
 
@@ -114,7 +103,14 @@ const Profile = () => {
           }
           onClick={onSave}
         >
-          {isLoading ? "Processing..." : "Save"}
+          {isLoading ? (
+            <>
+              Processing
+              <EllipsisAnim />
+            </>
+          ) : (
+            "Save"
+          )}
         </Button>
       }
     >

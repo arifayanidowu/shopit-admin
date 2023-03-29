@@ -1,4 +1,4 @@
-import { Button, useMediaQuery } from "@mui/material";
+import { Button } from "@mui/material";
 import {
   GridRowModel,
   GridValueFormatterParams,
@@ -6,7 +6,7 @@ import {
 } from "@mui/x-data-grid";
 import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import moment from "moment";
-import { useMemo, useEffect, useState, useCallback, useRef } from "react";
+import { useMemo, useCallback, useRef } from "react";
 import { toast, Id } from "react-toastify";
 import { getActions } from "src/components/shared/getActions";
 import { deleteBrand, getAllBrands, updateBrand } from "src/endpoints/brands";
@@ -17,7 +17,6 @@ import type { Brand as IBrand } from "src/types";
 const useBrand = () => {
   const queryClient = new QueryClient();
   let toastId = useRef<Id | null>(null);
-  const matches = useMediaQuery("(min-width:600px)");
   const {
     rowModesModel,
     setRowModesModel,
@@ -27,15 +26,16 @@ const useBrand = () => {
     handleEditClick,
     handleSaveClick,
     handleCancelClick,
+    open,
+    setOpen,
+    openConfirm,
+    setOpenConfirm,
+    itemId,
+    setItemId,
+    matches,
   } = useTableEdit();
-  const [open, setOpen] = useState(false);
-  const [openConfirm, setOpenConfirm] = useState(false);
-  const [brandId, setBrandId] = useState<string | null>(null);
   const { adminData } = useStore();
-  const { data, isLoading, error } = useQuery<IBrand[]>(
-    ["brands"],
-    getAllBrands
-  );
+  const { data, isLoading } = useQuery<IBrand[]>(["brands"], getAllBrands);
 
   const { mutateAsync } = useMutation(updateBrand, {
     onSuccess: () => {
@@ -47,10 +47,6 @@ const useBrand = () => {
         autoClose: 2000,
         closeButton: true,
       });
-
-      setTimeout(() => {
-        toast.dismiss(toastId.current!);
-      }, 2000);
     },
     onError: (error) => {
       let err = error as Error;
@@ -61,10 +57,6 @@ const useBrand = () => {
         autoClose: 2000,
         closeButton: true,
       });
-
-      setTimeout(() => {
-        toast.dismiss(toastId.current!);
-      }, 2000);
     },
   });
 
@@ -92,24 +84,13 @@ const useBrand = () => {
         autoClose: 2000,
         closeButton: true,
       });
-
-      setTimeout(() => {
-        toast.dismiss(toastId.current!);
-      }, 2000);
     },
   });
-
-  useEffect(() => {
-    let err = error as Error;
-    if (error) {
-      toast.error(err.message);
-    }
-  }, [error]);
 
   const columns = useMemo(() => {
     const handleOpenConfirm = (id: string) => {
       setOpenConfirm(true);
-      setBrandId(id);
+      setItemId(id);
     };
 
     return [
@@ -206,6 +187,8 @@ const useBrand = () => {
     handleEditClick,
     handleSaveClick,
     handleCancelClick,
+    setItemId,
+    setOpenConfirm,
   ]);
 
   const processRowUpdate = useCallback(
@@ -223,22 +206,22 @@ const useBrand = () => {
 
   const handleOpen = useCallback(() => {
     setOpen(true);
-  }, []);
+  }, [setOpen]);
 
   const handleClose = useCallback(() => {
     setOpen(false);
-  }, []);
+  }, [setOpen]);
 
   const handleCloseConfirm = useCallback(() => {
     setOpenConfirm(false);
-  }, []);
+  }, [setOpenConfirm]);
 
   const handleConfirm = useCallback(async () => {
     toastId.current = toast.loading("Deleting brand...");
     setOpenConfirm(false);
-    await deleteMutateAsync(brandId!);
-    setBrandId(null);
-  }, [deleteMutateAsync, brandId]);
+    await deleteMutateAsync(itemId!);
+    setItemId(null);
+  }, [deleteMutateAsync, itemId, setItemId, setOpenConfirm]);
 
   return {
     columns,
@@ -251,7 +234,7 @@ const useBrand = () => {
     handleRowEditStop,
     open,
     openConfirm,
-    brandId,
+    brandId: itemId,
     processRowUpdate,
     isLoading,
     handleConfirm,

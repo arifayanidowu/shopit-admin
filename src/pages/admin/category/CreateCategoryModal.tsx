@@ -12,6 +12,7 @@ import {
   TextField,
 } from "@mui/material";
 import { Controller } from "react-hook-form";
+import EllipsisAnim from "src/components/shared/EllipsisAnim";
 import useFormMutation from "src/hooks/useFormMutation";
 import { createCategory } from "../../../endpoints/category";
 
@@ -106,7 +107,14 @@ const CreateCategoryModal = ({ open, handleClose }: IProps) => {
               isLoading ? <CircularProgress size={14} color="inherit" /> : null
             }
           >
-            {isLoading ? "Processing..." : "Submit"}
+            {isLoading ? (
+              <>
+                Processing
+                <EllipsisAnim />
+              </>
+            ) : (
+              "Submit"
+            )}
           </Button>
         </DialogActions>
       </Paper>

@@ -30,3 +30,34 @@ export const createCategory = async (data: any): Promise<any> => {
     return error;
   }
 };
+
+export const updateCategory = async (data: any): Promise<any> => {
+  try {
+    const { id, ...body } = data;
+    const response = await axios.patch(`/category/update/${id}`, body);
+    return response.data;
+  } catch (error) {
+    const axiosError = error as AxiosError<{
+      message: string;
+    }>;
+    if (axiosError.response) {
+      throw new Error(axiosError.response.data?.message);
+    }
+    return error;
+  }
+};
+
+export const deleteCategory = async (id: string): Promise<any> => {
+  try {
+    const response = await axios.delete(`/category/delete/${id}`);
+    return response.data;
+  } catch (error) {
+    const axiosError = error as AxiosError<{
+      message: string;
+    }>;
+    if (axiosError.response) {
+      throw new Error(axiosError.response.data?.message);
+    }
+    return error;
+  }
+};

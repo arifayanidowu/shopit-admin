@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { Controller } from "react-hook-form";
 import DropzoneContent from "src/components/shared/DropzoneContent";
+import EllipsisAnim from "src/components/shared/EllipsisAnim";
 import { createBrand } from "src/endpoints/brands";
 import useFileHandler from "src/hooks/useFileHandler";
 import useFormMutation from "src/hooks/useFormMutation";
@@ -120,7 +121,14 @@ const AddBrandModal = ({ open, handleClose }: IProps) => {
               isLoading ? <CircularProgress size={14} color="inherit" /> : null
             }
           >
-            {isLoading ? "Processing..." : "Submit"}
+            {isLoading ? (
+              <>
+                Processing
+                <EllipsisAnim />
+              </>
+            ) : (
+              "Submit"
+            )}
           </Button>
         </DialogActions>
       </Paper>

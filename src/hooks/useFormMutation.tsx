@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRef } from "react";
 import { DeepPartial, FieldValues, Resolver, useForm } from "react-hook-form";
 import { Id, toast } from "react-toastify";
+import { toastOptions } from "src/utils";
 
 interface IProps<T extends FieldValues> {
   mutationFn: (data: T | any) => Promise<void>;
@@ -35,40 +36,31 @@ const useFormMutation = <T extends Record<string, any>>({
     resolver,
   });
 
-  const { mutate, isLoading } = useMutation(mutationFn, {
+  const { mutate, mutateAsync, isLoading } = useMutation(mutationFn, {
     onSuccess: () => {
       queryClient.invalidateQueries(queryKeys);
       toast.update(toastId.current!, {
         render: successMessage,
         type: "success",
-        autoClose: 2000,
-        closeOnClick: true,
-        closeButton: true,
+        ...toastOptions,
       });
       if (navigate) {
         navigate(path!);
       }
-      setTimeout(() => {
-        toast.dismiss(toastId.current!);
-      }, 2000);
     },
     onError: (error) => {
       let err = error as Error;
       toast.update(toastId.current!, {
         render: err.message,
         type: "error",
-        autoClose: 2000,
-        closeOnClick: true,
-        closeButton: true,
+        ...toastOptions,
       });
-      setTimeout(() => {
-        toast.dismiss(toastId.current!);
-      }, 2000);
     },
   });
 
   return {
     mutate,
+    mutateAsync,
     isLoading,
     validationErrors,
     control,

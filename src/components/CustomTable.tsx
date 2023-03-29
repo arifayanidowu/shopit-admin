@@ -43,6 +43,9 @@ interface ICustomTable {
   onRowEditStart?: GridEventListener<"rowEditStart"> | undefined;
   onRowEditStop?: GridEventListener<"rowEditStop"> | undefined;
   initialState?: GridInitialStateCommunity | undefined;
+  disableColumnFilter?: boolean;
+  disableColumnSelector?: boolean;
+  disableDensitySelector?: boolean;
 }
 
 const CustomTable = ({
@@ -63,12 +66,12 @@ const CustomTable = ({
   onRowEditStart,
   onRowEditStop,
   initialState,
+  disableColumnFilter,
+  disableColumnSelector,
+  disableDensitySelector,
 }: ICustomTable) => {
   return (
-    <Box
-      component="div"
-      sx={{ width: "100%", height: 350, overflowY: "hidden" }}
-    >
+    <Box component="div" sx={{ height: 350, overflowY: "hidden" }}>
       <DataGrid
         rows={rows}
         columns={columns}
@@ -82,6 +85,9 @@ const CustomTable = ({
         onProcessRowUpdateError={onProcessRowUpdateError}
         onRowEditStart={onRowEditStart}
         onRowEditStop={onRowEditStop}
+        disableColumnFilter={disableColumnFilter}
+        disableColumnSelector={disableColumnSelector}
+        disableDensitySelector={disableDensitySelector}
         pageSizeOptions={[5, 10, 25]}
         checkboxSelection={checkboxSelection}
         disableRowSelectionOnClick

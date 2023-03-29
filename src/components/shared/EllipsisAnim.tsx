@@ -1,20 +1,25 @@
+import { Box } from "@mui/material";
 import { motion } from "framer-motion";
 
 interface IProps {
   size?: number | string | undefined;
 }
 
+const EllipsisContainer = motion(Box);
+
 const EllipsisAnim = ({ size }: IProps) => {
   const containerVariants = {
     hidden: {
-      opacity: 0,
+      opacity: 0.5,
+      y: -5,
     },
     visible: {
-      opacity: 1,
+      opacity: 0.8,
+      y: [0, -5, 0],
       transition: {
-        delayChildren: 0.5,
-        staggerChildren: 0.2,
+        staggerChildren: 0.4,
         staggerDirection: 1,
+        duration: 2,
         type: "tween",
       },
     },
@@ -22,14 +27,19 @@ const EllipsisAnim = ({ size }: IProps) => {
 
   const ellipsisVariants = {
     hidden: {
-      opacity: 0,
+      opacity: 0.5,
+      y: -5,
     },
     visible: {
-      opacity: 1,
+      opacity: 0.8,
+      y: [0, -5, 0],
       transition: {
         repeat: Infinity,
         duration: 2,
-        ease: "easeOut",
+        type: "tween",
+        ease: "easeInOut",
+        damping: 10,
+        stiffness: 600,
       },
     },
   };
@@ -42,20 +52,22 @@ const EllipsisAnim = ({ size }: IProps) => {
       {Array(3)
         .fill("")
         .map((item, idx) => (
-          <motion.span
+          <EllipsisContainer
             key={idx}
             variants={ellipsisVariants}
-            style={{
-              width: size ?? "0.3rem",
-              height: size ?? "0.3rem",
+            sx={{
+              width: size ?? "0.2rem",
+              height: size ?? "0.2rem",
               display: "inline-block",
-              borderRadius: "50%",
+              borderRadius: 100,
               backgroundColor: "currentColor",
-              margin: "0 0.15rem",
+              margin: "0 1px",
+              border: "1px solid error.main",
             }}
+            component="span"
           >
             {item}
-          </motion.span>
+          </EllipsisContainer>
         ))}
     </motion.span>
   );

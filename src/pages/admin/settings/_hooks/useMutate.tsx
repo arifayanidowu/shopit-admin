@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useState, useRef, useEffect } from "react";
+import { useMemo, useCallback, useState, useRef } from "react";
 import { Id, toast } from "react-toastify";
 import {
   GridValueFormatterParams,
@@ -36,10 +36,7 @@ const useMutate = () => {
     useState<null | TUpdatedArguments>(null);
   const [entries, setEntries] = useState<GridRowSelectionModel>([]);
 
-  const { data, isLoading, error, isError } = useQuery<IData[]>(
-    ["admins"],
-    getAllAdmins
-  );
+  const { data, isLoading } = useQuery<IData[]>(["admins"], getAllAdmins);
 
   const { mutateAsync, isError: mutateError } = useMutation({
     mutationFn: updateAdmin,
@@ -74,13 +71,6 @@ const useMutate = () => {
       }, 2000);
     },
   });
-
-  useEffect(() => {
-    if (isError) {
-      const err = error as Error;
-      toast.error(err.message);
-    }
-  }, [isError, error]);
 
   const columns = useMemo(
     () => [

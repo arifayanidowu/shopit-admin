@@ -25,7 +25,8 @@ const Dashboard = () => {
   };
   return (
     <AnimateContainer
-      subtitle={` Welcome Back, ${
+      title="Dashboard"
+      salutation={`Welcome Back, ${
         toCapitalize(adminData.username) ?? adminData.name
       }`}
     >

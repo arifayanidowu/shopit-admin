@@ -31,10 +31,26 @@ const DropzoneContent = ({
     []
   );
   return (
-    <Paper square sx={containerStyle} {...getRootProps()} component="div">
+    <Paper
+      square
+      sx={{
+        ...containerStyle,
+        borderStyle: isDragActive ? "dotted" : "solid",
+        borderWidth: 2,
+      }}
+      {...getRootProps()}
+      component="div"
+    >
       <input {...getInputProps()} />
       {isDragActive ? (
-        <Box>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+          }}
+        >
           <Typography variant="h6">Drop the files here ...</Typography>
         </Box>
       ) : (
@@ -47,17 +63,20 @@ const DropzoneContent = ({
               "&:hover": {
                 opacity: 0.9,
               },
+              borderStyle: isDragActive ? "dashed" : "solid",
             },
           }}
         >
           {image ? (
-            <img
+            <Paper
+              component={"img"}
               src={src}
               alt="profile"
-              style={{
+              sx={{
                 width: "100%",
                 height: "100%",
-                objectFit: "cover",
+                objectFit: "contain",
+                objectPosition: "center",
               }}
             />
           ) : (

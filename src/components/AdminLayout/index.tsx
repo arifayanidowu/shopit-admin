@@ -30,6 +30,7 @@ import {
 import { ChevronRight } from "@mui/icons-material";
 import { AnimatePresence, motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
+import jwt_decode from "jwt-decode";
 import { toast } from "react-toastify";
 
 import { Drawer, DrawerHeader, lisItemStyle, styledList } from "./utils";
@@ -40,6 +41,7 @@ import { ColorModeContext } from "../../App";
 import { dashboardLinks, generalLinks, settingsLinks } from "./links";
 import PopupMenu from "./PopupMenu";
 import { getProfile } from "src/endpoints/auth";
+import RefetchIndicator from "./RefetchIndicator";
 
 const Indicator = ({ variants }: { variants: any }) => (
   <motion.div
@@ -105,6 +107,7 @@ const NavLinkItem = ({
 
 export default function AdminLayout() {
   const theme = useTheme();
+  const token = localStorage.getItem("auth_token");
   const location = useLocation();
   const matches = useMediaQuery("(min-width:700px)");
   const { setAdminData, adminData, resetState } = useStore();
@@ -113,9 +116,10 @@ export default function AdminLayout() {
   const { toggleColorMode } = React.useContext(ColorModeContext);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
-  const { data, isLoading, isError, error } = useQuery(["profile"], getProfile);
+  const { data, isFetching } = useQuery(["profile"], getProfile, {
+    enabled: !!token,
+  });
   const navigate = useNavigate();
-  const token = localStorage.getItem("auth_token");
 
   React.useEffect(() => {
     if (matches) {
@@ -127,8 +131,30 @@ export default function AdminLayout() {
 
   React.useEffect(() => {
     if (!token) {
-      logout(navigate, resetState);
+      navigate("/");
     }
+  }, [token, navigate]);
+
+  React.useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
+    if (token) {
+      const decoded = jwt_decode(token);
+      const { exp } = decoded as any;
+      const currentTime = Date.now() / 1000;
+
+      if (currentTime > exp) {
+        logout(navigate, resetState);
+      } else {
+        const timeUntilExpiration = exp - currentTime;
+        timeoutId = setTimeout(() => {
+          toast.error("Session expired!");
+          logout(navigate, resetState);
+        }, timeUntilExpiration * 1000);
+      }
+    }
+
+    return () => clearTimeout(timeoutId);
   }, [token, navigate, resetState]);
 
   React.useEffect(() => {
@@ -136,25 +162,6 @@ export default function AdminLayout() {
       setAdminData(data);
     }
   }, [data, setAdminData]);
-
-  React.useEffect(() => {
-    if (error) {
-      let err = error as any;
-      toast.error(err?.message, {
-        closeOnClick: true,
-        closeButton: true,
-        autoClose: 2000,
-      });
-
-      setTimeout(() => {
-        toast.dismiss();
-      }, 2000);
-    }
-  }, [error]);
-
-  React.useEffect(() => {
-    if (!isLoading && isError) logout(navigate, resetState);
-  }, [isError, navigate, isLoading, resetState]);
 
   const handleDrawerClose = () => {
     setOpen((prev) => !prev);
@@ -223,7 +230,13 @@ export default function AdminLayout() {
             {theme.direction === "rtl" ? (
               <ChevronRightIcon />
             ) : (
-              <ChevronLeftIcon />
+              <ChevronLeftIcon
+                sx={{
+                  transform: !open ? "rotate(-180deg)" : "rotate(0deg)",
+                  transition: "all 0.3s ease-in-out",
+                  translateX: !open ? 0 : -0.24,
+                }}
+              />
             )}
           </Fab>
         </DrawerHeader>
@@ -396,6 +409,7 @@ export default function AdminLayout() {
         </AppBar>
         <Toolbar />
         <Outlet />
+        <RefetchIndicator isFetching={isFetching} />
       </Box>
     </Box>
   );

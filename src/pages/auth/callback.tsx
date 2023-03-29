@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import PageLoader from "src/components/PageLoader";
+import EllipsisAnim from "src/components/shared/EllipsisAnim";
 import { getMagicToken } from "src/endpoints/auth";
 import { ReactComponent as UnauthorizedIcon } from "./_svgs/unauthorized.svg";
 
@@ -105,7 +106,10 @@ const AuthCallback = () => {
         >
           <Typography variant="h1">🎉</Typography>
           <Typography variant="h3">Logged in successfully!</Typography>
-          <Typography sx={{ mt: 5 }}>Redirecting...</Typography>
+          <Typography sx={{ mt: 5 }}>
+            Redirecting
+            <EllipsisAnim />
+          </Typography>
         </CardContent>
       </Card>
     </Box>

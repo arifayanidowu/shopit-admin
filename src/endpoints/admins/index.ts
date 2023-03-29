@@ -16,9 +16,6 @@ export const createAdmin = async (data: any) => {
 };
 
 export const getAllAdmins = async () => {
-  const token = localStorage.getItem("auth_token");
-  axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
   try {
     const response = await axios.get("/auth/all/admins");
     return response.data;
@@ -33,9 +30,6 @@ export const getAllAdmins = async () => {
 };
 
 export const deleteAdmin = async (id: string) => {
-  const token = localStorage.getItem("auth_token");
-  axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
   try {
     const response = await axios.delete(`/auth/delete/admin/${id}`);
     return response.data;
@@ -50,9 +44,6 @@ export const deleteAdmin = async (id: string) => {
 };
 
 export const updateAdmin = async (admin: any) => {
-  const token = localStorage.getItem("auth_token");
-  axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
   try {
     const response = await axios.patch(`/auth/update/admin`, admin);
     return response.data;
@@ -67,9 +58,6 @@ export const updateAdmin = async (admin: any) => {
 };
 
 export const deleteAdmins = async (ids: string[]) => {
-  const token = localStorage.getItem("auth_token");
-  axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
   try {
     const response = await axios.delete(`/auth/delete/admins`, {
       data: {
@@ -88,15 +76,8 @@ export const deleteAdmins = async (ids: string[]) => {
 };
 
 export const updateProfile = async (data: any) => {
-  const token = localStorage.getItem("auth_token");
-  axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
   try {
-    const response = await axios.patch(`/auth/update/admin/profile`, data, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await axios.patch(`/auth/update/admin/profile`, data);
     return response.data;
   } catch (error) {
     const err = error as AxiosError<{

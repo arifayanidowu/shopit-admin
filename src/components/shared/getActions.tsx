@@ -1,6 +1,7 @@
 import { Close, DeleteForeverOutlined, Edit, Save } from "@mui/icons-material";
 import { GridActionsCellItem, GridRowModes } from "@mui/x-data-grid";
 import { GridRowModesModel } from "@mui/x-data-grid";
+import { CircularProgress } from "@mui/material";
 
 interface IActions {
   rowModesModel: GridRowModesModel;
@@ -9,6 +10,8 @@ interface IActions {
   handleOpenConfirm: (id: string) => void;
   handleSaveClick: (id: string) => () => void;
   handleCancelClick: (id: string) => () => void;
+  reset?: () => void;
+  isLoading?: boolean;
 }
 
 export const getActions = ({
@@ -18,8 +21,15 @@ export const getActions = ({
   handleSaveClick,
   handleOpenConfirm,
   handleCancelClick,
+  reset,
+  isLoading,
 }: IActions) => {
   const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+
+  const handleCancel = () => {
+    handleCancelClick(id)();
+    reset && reset();
+  };
 
   if (isInEditMode) {
     return [
@@ -33,18 +43,25 @@ export const getActions = ({
         icon={<Close fontSize="large" />}
         label="Cancel"
         className="textPrimary"
-        onClick={handleCancelClick(id)}
+        onClick={handleCancel}
         color="secondary"
       />,
     ];
   }
   return [
     <GridActionsCellItem
-      icon={<Edit color="info" fontSize="large" />}
+      icon={
+        isLoading ? (
+          <CircularProgress size={18} color="inherit" />
+        ) : (
+          <Edit color="info" fontSize="large" />
+        )
+      }
       label="Edit"
       onClick={handleEditClick(id)}
       className="textPrimary"
       color="inherit"
+      disabled={isLoading}
     />,
     <GridActionsCellItem
       icon={<DeleteForeverOutlined color="error" fontSize="large" />}
@@ -52,6 +69,7 @@ export const getActions = ({
       onClick={() => handleOpenConfirm(id)}
       className="textPrimary"
       color="error"
+      disabled={isLoading}
     />,
   ];
 };

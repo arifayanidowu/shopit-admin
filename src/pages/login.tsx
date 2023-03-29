@@ -12,6 +12,7 @@ import {
 import { useEffect } from "react";
 import { Controller } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
+import EllipsisAnim from "src/components/shared/EllipsisAnim";
 import { authLogin } from "src/endpoints/auth";
 import useFormMutation from "src/hooks/useFormMutation";
 import { useStore } from "../store";
@@ -22,13 +23,12 @@ const Login = () => {
   const theme = useTheme();
   const { setAdminData } = useStore();
   const {
-    mutate,
+    mutateAsync,
     isLoading,
     validationErrors,
     handleSubmit,
     control,
     register,
-    reset,
     toastId,
     toast,
   } = useFormMutation({
@@ -63,13 +63,12 @@ const Login = () => {
     }
   }, [navigate, token]);
 
-  const onSubmit = ({ email }: { email: string }) => {
+  const onSubmit = async ({ email }: { email: string }) => {
     toastId.current = toast.loading("Logging in...");
     setAdminData({
       email,
     });
-    mutate(email);
-    reset();
+    await mutateAsync(email);
   };
 
   return (
@@ -160,7 +159,14 @@ const Login = () => {
                     }
                     type="submit"
                   >
-                    {isLoading ? "Processing..." : "Sign In"}
+                    {isLoading ? (
+                      <>
+                        Processing
+                        <EllipsisAnim />{" "}
+                      </>
+                    ) : (
+                      "Sign In"
+                    )}
                   </Button>
                 </Box>
               </form>

@@ -62,13 +62,20 @@ const useMode = () => {
                 fontWeight: 600,
                 textTransform: "none",
                 borderRadius: "0px",
-                border: `0.5px solid ${mode === "light" ? "#e0e0e0" : "#515151"
-                  }`,
+                border: `0.5px solid ${
+                  mode === "light" ? "#e0e0e0" : "#515151"
+                }`,
                 "&:hover": {
                   transform: "translateY(-2px)",
                   transition: "transform 0.2s ease-in-out",
                 },
                 boxShadow: "none",
+                "&.Mui-contained": {
+                  color: mode === "light" ? "#fff" : "#fff",
+                },
+                "&.MuiButton-text": {
+                  color: mode === "light" ? "#000" : "#fff",
+                },
               },
             },
           },
@@ -95,6 +102,17 @@ const useMode = () => {
                   "&.Mui-focused fieldset": {
                     borderColor: mode === "light" ? "#000" : "#fff",
                   },
+                },
+                "&.MuiInput-underline": {
+                  border: `1px solid ${
+                    mode === "light" ? "#e0e0e0" : "#515151"
+                  }`,
+                  padding: "5px 10px",
+                },
+                "&.MuiInput-root:after": {
+                  borderBottom: `2px solid ${
+                    mode === "light" ? "#000" : "#fff"
+                  } !important`,
                 },
               },
             },
@@ -181,6 +199,13 @@ const useMode = () => {
                 fontFamily,
               },
               displayedRows: {
+                fontFamily,
+              },
+            },
+          },
+          MuiChip: {
+            styleOverrides: {
+              root: {
                 fontFamily,
               },
             },

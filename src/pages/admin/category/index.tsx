@@ -1,15 +1,19 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, useMediaQuery } from "@mui/material";
 import { GridValueFormatterParams } from "@mui/x-data-grid";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
-import { toast } from "react-toastify";
+import { Id, toast } from "react-toastify";
 
 import CustomTable from "src/components/CustomTable";
 import AnimateContainer from "src/components/shared/AnimateContainer";
-import { getCategories } from "src/endpoints/category";
+import {
+  deleteCategory,
+  getCategories,
+  updateCategory,
+} from "src/endpoints/category";
 import { useStore } from "src/store";
 import { adminActions } from "src/utils/adminActions";
 import { Category as ICategory } from "src/types";
@@ -22,6 +26,8 @@ import ConfirmDialog from "src/components/shared/ConfirmDialog";
 
 const Category = () => {
   const matches = useMediaQuery("(min-width:600px)");
+  const toastId = useRef<Id | null>(null);
+  const queryClient = useQueryClient();
   const { adminData } = useStore();
   const [open, setOpen] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
@@ -37,17 +43,52 @@ const Category = () => {
     handleCancelClick,
   } = useTableEdit();
 
-  const { data, isLoading, error } = useQuery<ICategory[]>(
+  const { data, isLoading } = useQuery<ICategory[]>(
     ["category"],
     getCategories
   );
 
-  useEffect(() => {
-    if (error) {
+  const { mutateAsync } = useMutation(updateCategory, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["category"]);
+      toast.update(toastId.current!, {
+        render: "Category updated successfully",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+    },
+    onError: (error) => {
       let err = error as Error;
-      toast.error(err.message);
-    }
-  }, [error]);
+      toast.update(toastId.current!, {
+        render: err.message,
+        type: "error",
+        isLoading: false,
+        autoClose: 2000,
+      });
+    },
+  });
+
+  const { mutateAsync: deleteCategoryAsync } = useMutation(deleteCategory, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["category"]);
+      toast.update(toastId.current!, {
+        render: "Category deleted successfully",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+    },
+    onError: (error) => {
+      let err = error as Error;
+      toast.update(toastId.current!, {
+        render: err.message,
+        type: "error",
+        isLoading: false,
+        autoClose: 2000,
+      });
+    },
+  });
 
   const columns = useMemo(() => {
     const handleOpenConfirm = (id: string) => {
@@ -119,13 +160,11 @@ const Category = () => {
     oldRow: GridRowModel
   ) => {
     const updatedRow = { ...newRow };
-    return updatedRow;
+    toastId.current = toast.loading("Updating Brand...");
+    const data = await mutateAsync(updatedRow);
+    if (!data) return oldRow;
 
-    // toastId.current = toast.loading("Updating Brand...");
-    // const data = await mutateAsync(updatedRow);
-    // if (!data) return oldRow;
-
-    // return data;
+    return data;
   };
 
   const handleClose = () => {
@@ -137,9 +176,9 @@ const Category = () => {
   };
 
   const handleConfirm = async () => {
-    // toastId.current = toast.loading("Deleting brand...");
+    toastId.current = toast.loading("Deleting category...");
     setOpenConfirm(false);
-    // await deleteMutateAsync(brandId!);
+    await deleteCategoryAsync(categoryId!);
     setCategoryId(null);
   };
 
@@ -183,6 +222,7 @@ const Category = () => {
         checkboxSelection={false}
         editMode="row"
         processRowUpdate={processRowUpdate}
+        onProcessRowUpdateError={(err) => console.log(err)}
         rowModesModel={rowModesModel}
         onRowModesModelChange={handleRowModesModelChange}
         onRowEditStart={handleRowEditStart}

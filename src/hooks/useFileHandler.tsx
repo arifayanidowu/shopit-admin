@@ -36,6 +36,8 @@ const useFileHandler = () => {
     isDragActive,
     image,
     file,
+    setImage,
+    setFile,
   };
 };
 
