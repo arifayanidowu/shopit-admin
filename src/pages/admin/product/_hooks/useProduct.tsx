@@ -292,7 +292,7 @@ const useProduct = () => {
         editable: true,
         renderEditCell: (params: GridRenderEditCellParams<IProduct>) => {
           const options =
-            params.row.sizes[0].split(",").map((item) => ({
+            ["S", "M", "L", "XL", "XXL"].map((item) => ({
               value: item,
               label: item,
             })) || [];
@@ -418,7 +418,7 @@ const useProduct = () => {
         setUpdatedProductId(updatedRow.id as string);
         toastId.current = toast.loading("Updating Product...");
         if (file) {
-          formData.append("file", file);
+          formData.append("file", file as Blob);
         }
         Object.keys(updatedRow).forEach((key) => {
           if (key === "brand") {

@@ -11,6 +11,8 @@ import {
   Select,
   FormControl,
   InputLabel,
+  MenuItem,
+  OutlinedInput,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { Controller } from "react-hook-form";
@@ -18,15 +20,19 @@ import { Controller } from "react-hook-form";
 import DropzoneContent from "src/components/shared/DropzoneContent";
 import EllipsisAnim from "src/components/shared/EllipsisAnim";
 import { getAllBrands } from "src/endpoints/brands";
+import { getCategories } from "src/endpoints/category";
 import { createProduct } from "src/endpoints/product";
 import useFileHandler from "src/hooks/useFileHandler";
 import useFormMutation from "src/hooks/useFormMutation";
-import { Brand, Product } from "src/types";
+import { Brand, Product, Category } from "src/types";
+import { MenuProps } from "./SelectEditInputCell";
 
 interface IProps {
   open: boolean;
   handleClose: () => void;
 }
+
+const sizes = ["S", "M", "L", "XL", "XXL"];
 
 const AddProductModal = ({ open, handleClose }: IProps) => {
   const {
@@ -49,13 +55,23 @@ const AddProductModal = ({ open, handleClose }: IProps) => {
       price: 0,
       quantity: 0,
       brandId: "",
+      categoryId: "",
+      size: "",
     },
   });
 
   const { data: brands } = useQuery<Brand[]>(["brands"], getAllBrands);
+  const categoryQuery = useQuery<Category[]>(["category"], getCategories);
 
-  const { file, image, getInputProps, getRootProps, isDragActive } =
-    useFileHandler();
+  const {
+    file,
+    image,
+    getInputProps,
+    getRootProps,
+    isDragActive,
+    setFile,
+    setImage,
+  } = useFileHandler();
 
   const onSubmit = (data: Product) => {
     toastId.current = toast.loading("Creating product...");
@@ -65,11 +81,18 @@ const AddProductModal = ({ open, handleClose }: IProps) => {
     formData.append("price", data.price?.toString());
     formData.append("quantity", data.quantity?.toString());
     formData.append("brandId", data.brandId!);
+    formData.append("categoryId", data.categoryId!);
+    if (data.size && Array.isArray(data.size)) {
+      formData.append("size", data.size?.join(",")!);
+    }
+
     if (file) {
       formData.append("file", file as Blob);
     }
     mutate(formData as any);
     reset();
+    setFile(null);
+    setImage(null);
     handleClose();
   };
 
@@ -196,10 +219,78 @@ const AddProductModal = ({ open, handleClose }: IProps) => {
                 }}
               >
                 <option aria-label="None" value="" />
-                {brands?.map((brand) => (
-                  <option key={brand.id} value={brand.id}>
-                    {brand.name}
-                  </option>
+                {brands?.length &&
+                  brands?.map((brand) => (
+                    <option key={brand.id} value={brand.id}>
+                      {brand.name}
+                    </option>
+                  ))}
+              </Select>
+            </FormControl>
+          )}
+        />
+        <Controller
+          name="categoryId"
+          control={control}
+          render={({ field }) => (
+            <FormControl fullWidth required>
+              <InputLabel id="category-input-label">Category</InputLabel>
+              <Select
+                native
+                {...field}
+                {...register("categoryId", {
+                  required: "Category is required",
+                })}
+                fullWidth
+                required
+                sx={{ mb: 2 }}
+                label="Category"
+                inputProps={{
+                  name: "categoryId",
+                  id: "categoryId",
+                }}
+              >
+                <option aria-label="None" value="" />
+                {categoryQuery.data?.length &&
+                  categoryQuery.data?.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+              </Select>
+            </FormControl>
+          )}
+        />
+        <Controller
+          name="size"
+          control={control}
+          render={({ field }) => (
+            <FormControl fullWidth required>
+              <InputLabel id="size-input-label">Size</InputLabel>
+              <Select
+                {...field}
+                value={
+                  field.value && typeof field.value === "string"
+                    ? field.value?.split(",")
+                    : field.value || []
+                }
+                {...register("size", {
+                  required: "size is required",
+                })}
+                multiple
+                sx={{ mb: 2 }}
+                label="Size"
+                inputProps={{
+                  name: "size",
+                  id: "size",
+                }}
+                input={<OutlinedInput />}
+                MenuProps={MenuProps}
+              >
+                {sizes?.map((size, idx) => (
+                  <MenuItem key={idx} value={size}>
+                    {size}
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>

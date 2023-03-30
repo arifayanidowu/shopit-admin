@@ -13,7 +13,7 @@ interface SelectEditProps extends GridRenderCellParams {
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
-const MenuProps = {
+export const MenuProps = {
   PaperProps: {
     elevation: 0,
     style: {

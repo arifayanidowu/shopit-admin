@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Avatar, Button, Tooltip } from "@mui/material";
 import {
   GridRowModel,
   GridValueFormatterParams,
@@ -6,10 +6,14 @@ import {
 } from "@mui/x-data-grid";
 import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import moment from "moment";
-import { useMemo, useCallback, useRef } from "react";
+import { useMemo, useCallback, useRef, useState } from "react";
 import { toast, Id } from "react-toastify";
+import DropzoneContent from "src/components/shared/DropzoneContent";
+
 import { getActions } from "src/components/shared/getActions";
+import PopupModal from "src/components/shared/PopupModal";
 import { deleteBrand, getAllBrands, updateBrand } from "src/endpoints/brands";
+import useFileHandler from "src/hooks/useFileHandler";
 import useTableEdit from "src/hooks/useTableEdit";
 import { useStore } from "src/store";
 import type { Brand as IBrand } from "src/types";
@@ -18,6 +22,15 @@ import { toastOptions } from "src/utils";
 const useBrand = () => {
   const queryClient = new QueryClient();
   let toastId = useRef<Id | null>(null);
+  const {
+    file,
+    image,
+    setImage,
+    setFile,
+    getInputProps,
+    getRootProps,
+    isDragActive,
+  } = useFileHandler();
   const {
     rowModesModel,
     setRowModesModel,
@@ -36,6 +49,8 @@ const useBrand = () => {
   } = useTableEdit();
   const { adminData } = useStore();
   const { data, isLoading } = useQuery<IBrand[]>(["brands"], getAllBrands);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [currentImage, setCurrentImage] = useState<string | null>(null);
 
   const { mutateAsync } = useMutation(updateBrand, {
     onSuccess: () => {
@@ -67,10 +82,6 @@ const useBrand = () => {
           type: "success",
         }),
       });
-
-      setTimeout(() => {
-        toast.dismiss(toastId.current!);
-      }, 2000);
     },
     onError: (error) => {
       const err = error as Error;
@@ -89,6 +100,22 @@ const useBrand = () => {
       setItemId(id);
     };
 
+    const handleClickPopup = (
+      event: React.MouseEvent<HTMLButtonElement>,
+      image: string
+    ) => {
+      setAnchorEl(event.currentTarget);
+      setCurrentImage(image);
+    };
+
+    const handleClosePopup = () => {
+      setAnchorEl(null);
+      setCurrentImage(null);
+    };
+
+    const openPopup = Boolean(anchorEl);
+    const id = openPopup ? "image-popover" : undefined;
+
     return [
       { field: "id", headerName: "ID", width: 130, hide: true },
       {
@@ -101,21 +128,60 @@ const useBrand = () => {
       {
         field: "logo",
         headerName: "Image",
-        width: 200,
+        width: 100,
         sortable: false,
         filterable: false,
-        renderCell: (params: GridRenderEditCellParams<IBrand>) => (
-          <img
-            src={params.row?.logo}
-            style={{
-              width: 50,
-              height: 50,
-              backgroundColor: "white",
-              objectFit: "contain",
-            }}
-            alt="logo"
-          />
-        ),
+        editable: true,
+        renderCell: (params: GridRenderEditCellParams<IBrand>) => {
+          if (params.value == null) {
+            return "No image";
+          }
+          return (
+            <>
+              <Tooltip title="Click to view image" placement="top" arrow>
+                <Button
+                  aria-describedby={id}
+                  onClick={(e) => handleClickPopup(e, params.value as string)}
+                >
+                  <Avatar
+                    src={params.value as string}
+                    alt="product"
+                    sx={{
+                      width: 50,
+                      height: 50,
+                      backgroundColor: "white",
+                    }}
+                    variant="square"
+                  />
+                </Button>
+              </Tooltip>
+              <PopupModal
+                id={id}
+                open={openPopup}
+                anchorEl={anchorEl}
+                handleClose={handleClosePopup}
+                image={currentImage ?? ""}
+              />
+            </>
+          );
+        },
+        renderEditCell: (params: GridRenderEditCellParams<IBrand>) => {
+          return (
+            <DropzoneContent
+              getRootProps={getRootProps}
+              getInputProps={getInputProps}
+              isDragActive={isDragActive}
+              image={params.row.logo as string}
+              src={image ?? (params.row.logo as string)}
+              containerStyle={{
+                width: 50,
+                height: 50,
+                backgroundColor: "white",
+                margin: "0 auto",
+              }}
+            />
+          );
+        },
       },
       {
         field: "products",
@@ -174,6 +240,12 @@ const useBrand = () => {
       },
     ];
   }, [
+    anchorEl,
+    getRootProps,
+    getInputProps,
+    isDragActive,
+    image,
+    currentImage,
     rowModesModel,
     handleEditClick,
     handleSaveClick,
@@ -184,15 +256,30 @@ const useBrand = () => {
 
   const processRowUpdate = useCallback(
     async (newRow: GridRowModel, oldRow: GridRowModel) => {
-      const updatedRow = { ...newRow };
+      try {
+        const formData = new FormData();
+        const updatedRow = { ...newRow };
+        toastId.current = toast.loading("Updating Brand...");
+        if (file) {
+          formData.append("file", file as Blob);
+        }
+        Object.keys(updatedRow).forEach((key) => {
+          if (key === "products") return;
+          formData.append(key, updatedRow[key] as string);
+        });
 
-      toastId.current = toast.loading("Updating Brand...");
-      const data = await mutateAsync(updatedRow);
-      if (!data) return oldRow;
+        const data = await mutateAsync(formData);
+        if (!data) return oldRow;
 
-      return data;
+        return data;
+      } catch (error) {
+        return oldRow;
+      } finally {
+        setImage(null);
+        setFile(null);
+      }
     },
-    [mutateAsync]
+    [mutateAsync, file, setFile, setImage]
   );
 
   const handleOpen = useCallback(() => {

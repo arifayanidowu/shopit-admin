@@ -56,7 +56,7 @@ const Brand = () => {
         }}
       >
         <CustomTable
-          rows={data!}
+          rows={data! ?? []}
           columns={columns}
           loading={isLoading}
           checkboxSelection={false}

@@ -36,7 +36,7 @@ const PopupModal = ({
           elevation={0}
           sx={(theme) => ({
             "& .MuiPaper-root": {
-              backgroundColor: "transparent",
+              backgroundColor: theme.palette.background.paper,
               height: "fit-content",
               overflow: "hidden",
               border: 0,
@@ -49,9 +49,12 @@ const PopupModal = ({
             src={image}
             alt={title ?? "image"}
             sx={(theme) => ({
-              width: 200,
-              height: "100%",
-              backgroundRepeat: "no-repeat",
+              "&.MuiPaper-root": {
+                width: 200,
+                height: "100%",
+                backgroundRepeat: "no-repeat",
+                backgroundColor: theme.palette.common.white,
+              },
             })}
           />
         </Popover>

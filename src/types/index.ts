@@ -108,6 +108,7 @@ export type Product = {
   updatedAt: Date;
   isPublished: boolean;
   sizes: string[];
+  size: string | null;
   status: "draft" | "published" | "archived";
   order: Order | null;
   orderId: string | null;

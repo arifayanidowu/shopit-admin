@@ -21,8 +21,7 @@ export const createBrand = async (data: any) => {
 
 export const updateBrand = async (data: any) => {
   try {
-    const { id, ...body } = data;
-    const response = await axios.patch(`/brand/${id}`, body, {
+    const response = await axios.patch(`/brand/${data.get("id")}`, data, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

@@ -1,18 +1,17 @@
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { Delete } from "@mui/icons-material";
 import { Box, Button, Grid, Paper, TextField, Typography } from "@mui/material";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { toast, Id } from "react-toastify";
+import { Controller } from "react-hook-form";
 
 import AnimateContainer from "src/components/shared/AnimateContainer";
 import DropzoneContent from "src/components/shared/DropzoneContent";
 import EllipsisAnim from "src/components/shared/EllipsisAnim";
 import { updateProfile } from "src/endpoints/admins";
 import useFileHandler from "src/hooks/useFileHandler";
+import useFormMutation from "src/hooks/useFormMutation";
 import { useStore } from "src/store";
-import { toastOptions, toCapitalize } from "src/utils";
+import { toCapitalize } from "src/utils";
 
 interface IProfile {
   name: string;
@@ -21,38 +20,27 @@ interface IProfile {
 }
 
 const Profile = () => {
-  let toastId: Id;
-  const queryClient = useQueryClient();
   const { adminData } = useStore();
   const { file, image, getInputProps, getRootProps, isDragActive } =
     useFileHandler();
-  const { setValue, control, handleSubmit } = useForm<IProfile>({
+  const {
+    mutate,
+    isLoading,
+    validationErrors,
+    handleSubmit,
+    control,
+    register,
+    toastId,
+    toast,
+    setValue,
+  } = useFormMutation<IProfile>({
+    mutationFn: updateProfile,
+    queryKeys: ["profile"],
+    successMessage: "Profile updated successfully!",
     defaultValues: {
       name: "",
       email: "",
       username: "",
-    },
-  });
-
-  const { mutate, isLoading } = useMutation({
-    mutationFn: updateProfile,
-    onSuccess: () => {
-      queryClient.invalidateQueries(["profile"]);
-      toast.update(toastId, {
-        ...toastOptions({
-          render: "Profile updated successfully!",
-          type: "success",
-        }),
-      });
-    },
-    onError: (error) => {
-      const err = error as Error;
-      toast.update(toastId as Id, {
-        ...toastOptions({
-          render: err.message,
-          type: "error",
-        }),
-      });
     },
   });
 
@@ -73,7 +61,7 @@ const Profile = () => {
       if (file) {
         formData.append("avatar", file);
       }
-      toastId = toast.loading("Updating profile...");
+      toastId.current = toast.loading("Updating profile...");
       mutate(formData);
     })();
   };
@@ -137,9 +125,15 @@ const Profile = () => {
                       <TextField
                         fullWidth
                         label="Name"
+                        required
                         variant="outlined"
                         sx={{ mb: 4 }}
                         {...field}
+                        {...register("name", {
+                          required: "Name is required",
+                        })}
+                        error={!!validationErrors?.name}
+                        helperText={validationErrors?.name?.message}
                       />
                     )}
                   />
@@ -151,9 +145,15 @@ const Profile = () => {
                       <TextField
                         fullWidth
                         label="Email"
+                        required
                         variant="outlined"
                         sx={{ mb: 4 }}
                         {...field}
+                        {...register("email", {
+                          required: "Email is required",
+                        })}
+                        error={!!validationErrors?.email}
+                        helperText={validationErrors?.email?.message}
                       />
                     )}
                   />
@@ -168,6 +168,9 @@ const Profile = () => {
                         variant="outlined"
                         sx={{ mb: 4 }}
                         {...field}
+                        {...register("username")}
+                        error={!!validationErrors?.username}
+                        helperText={validationErrors?.username?.message}
                       />
                     )}
                   />

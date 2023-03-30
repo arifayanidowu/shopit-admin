@@ -30,6 +30,7 @@ const useFormMutation = <T extends Record<string, any>>({
     handleSubmit,
     register,
     reset,
+    setValue,
     formState: { errors: validationErrors },
   } = useForm<T>({
     defaultValues,
@@ -66,6 +67,7 @@ const useFormMutation = <T extends Record<string, any>>({
     isLoading,
     validationErrors,
     control,
+    setValue,
     handleSubmit,
     register,
     reset,
