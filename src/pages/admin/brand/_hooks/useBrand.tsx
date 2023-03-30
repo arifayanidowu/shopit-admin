@@ -13,6 +13,7 @@ import { deleteBrand, getAllBrands, updateBrand } from "src/endpoints/brands";
 import useTableEdit from "src/hooks/useTableEdit";
 import { useStore } from "src/store";
 import type { Brand as IBrand } from "src/types";
+import { toastOptions } from "src/utils";
 
 const useBrand = () => {
   const queryClient = new QueryClient();
@@ -32,7 +33,6 @@ const useBrand = () => {
     setOpenConfirm,
     itemId,
     setItemId,
-    matches,
   } = useTableEdit();
   const { adminData } = useStore();
   const { data, isLoading } = useQuery<IBrand[]>(["brands"], getAllBrands);
@@ -41,21 +41,19 @@ const useBrand = () => {
     onSuccess: () => {
       queryClient.invalidateQueries(["brands"]);
       toast.update(toastId.current!, {
-        render: "Brand updated successfully!",
-        type: "success",
-        closeOnClick: true,
-        autoClose: 2000,
-        closeButton: true,
+        ...toastOptions({
+          render: "Brand updated successfully",
+          type: "success",
+        }),
       });
     },
     onError: (error) => {
       let err = error as Error;
       toast.update(toastId.current!, {
-        render: err.message,
-        type: "error",
-        closeOnClick: true,
-        autoClose: 2000,
-        closeButton: true,
+        ...toastOptions({
+          render: err.message,
+          type: "error",
+        }),
       });
     },
   });
@@ -64,11 +62,10 @@ const useBrand = () => {
     onSuccess: () => {
       queryClient.invalidateQueries(["brands"]);
       toast.update(toastId.current!, {
-        render: "Brand deleted successfully!",
-        type: "success",
-        closeOnClick: true,
-        autoClose: 2000,
-        closeButton: true,
+        ...toastOptions({
+          render: "Brand deleted successfully!",
+          type: "success",
+        }),
       });
 
       setTimeout(() => {
@@ -78,11 +75,10 @@ const useBrand = () => {
     onError: (error) => {
       let err = error as Error;
       toast.update(toastId.current!, {
-        render: err.message,
-        type: "error",
-        closeOnClick: true,
-        autoClose: 2000,
-        closeButton: true,
+        ...toastOptions({
+          render: err.message,
+          type: "error",
+        }),
       });
     },
   });
@@ -98,14 +94,14 @@ const useBrand = () => {
       {
         field: "name",
         headerName: "Name",
-        width: 130,
+        width: 200,
         sortable: false,
         editable: true,
       },
       {
         field: "logo",
         headerName: "Image",
-        width: 130,
+        width: 200,
         sortable: false,
         filterable: false,
         renderCell: (params: GridRenderEditCellParams<IBrand>) => (
@@ -124,8 +120,7 @@ const useBrand = () => {
       {
         field: "products",
         headerName: "Products",
-        width: 130,
-        flex: matches ? 1 : 0,
+        width: 200,
         sortable: false,
         renderCell: (params: GridRenderEditCellParams<IBrand>) => (
           <Button
@@ -140,25 +135,23 @@ const useBrand = () => {
       {
         field: "createdAt",
         headerName: "CreatedAt",
-        width: 130,
-        flex: matches ? 1 : 0,
+        width: 200,
         valueFormatter: (params: GridValueFormatterParams<Date>) => {
           if (params.value == null) {
             return "";
           }
-          return moment(params.value as Date).format("MMMM Do YYYY, h:mm:ss A");
+          return moment(params.value).format("MMMM Do YYYY, h:mm:ss A");
         },
       },
       {
         field: "updatedAt",
         headerName: "UpdatedAt",
-        width: 130,
-        flex: matches ? 1 : 0,
+        width: 200,
         valueFormatter: (params: GridValueFormatterParams<Date>) => {
           if (params.value == null) {
             return "";
           }
-          return moment(params.value as Date).format("MMMM Do YYYY, h:mm:ss A");
+          return moment(params.value).format("MMMM Do YYYY, h:mm:ss A");
         },
       },
       {
@@ -167,7 +160,6 @@ const useBrand = () => {
         headerName: "Action",
         width: 130,
         cellClassName: "actions",
-        flex: matches ? 1 : 0,
         sortable: false,
         filterable: false,
         getActions: ({ id }: { id: string }) =>
@@ -182,7 +174,6 @@ const useBrand = () => {
       },
     ];
   }, [
-    matches,
     rowModesModel,
     handleEditClick,
     handleSaveClick,

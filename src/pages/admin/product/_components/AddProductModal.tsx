@@ -103,7 +103,12 @@ const AddProductModal = ({ open, handleClose }: IProps) => {
           isDragActive={isDragActive}
           image={image as string}
           src={image as string}
-          containerStyle={{ height: 200, mb: 2 }}
+          containerStyle={{
+            height: 200,
+            mb: 2,
+            borderStyle: isDragActive ? "dotted" : "solid",
+            borderWidth: 2,
+          }}
         />
         <Controller
           name="name"

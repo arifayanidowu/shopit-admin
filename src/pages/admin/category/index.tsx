@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, useMediaQuery } from "@mui/material";
+import { Button } from "@mui/material";
 import { GridValueFormatterParams } from "@mui/x-data-grid";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
@@ -23,9 +23,9 @@ import { getActions } from "src/components/shared/getActions";
 import useTableEdit from "src/hooks/useTableEdit";
 import { GridRowModel } from "@mui/x-data-grid";
 import ConfirmDialog from "src/components/shared/ConfirmDialog";
+import { toastOptions } from "src/utils";
 
 const Category = () => {
-  const matches = useMediaQuery("(min-width:600px)");
   const toastId = useRef<Id | null>(null);
   const queryClient = useQueryClient();
   const { adminData } = useStore();
@@ -52,19 +52,19 @@ const Category = () => {
     onSuccess: () => {
       queryClient.invalidateQueries(["category"]);
       toast.update(toastId.current!, {
-        render: "Category updated successfully",
-        type: "success",
-        isLoading: false,
-        autoClose: 2000,
+        ...toastOptions({
+          render: "Category updated successfully",
+          type: "success",
+        }),
       });
     },
     onError: (error) => {
       let err = error as Error;
       toast.update(toastId.current!, {
-        render: err.message,
-        type: "error",
-        isLoading: false,
-        autoClose: 2000,
+        ...toastOptions({
+          render: err.message,
+          type: "error",
+        }),
       });
     },
   });
@@ -73,19 +73,19 @@ const Category = () => {
     onSuccess: () => {
       queryClient.invalidateQueries(["category"]);
       toast.update(toastId.current!, {
-        render: "Category deleted successfully",
-        type: "success",
-        isLoading: false,
-        autoClose: 2000,
+        ...toastOptions({
+          render: "Category deleted successfully",
+          type: "success",
+        }),
       });
     },
     onError: (error) => {
       let err = error as Error;
       toast.update(toastId.current!, {
-        render: err.message,
-        type: "error",
-        isLoading: false,
-        autoClose: 2000,
+        ...toastOptions({
+          render: err.message,
+          type: "error",
+        }),
       });
     },
   });
@@ -100,15 +100,13 @@ const Category = () => {
       {
         field: "name",
         headerName: "Name",
-        width: 130,
-        flex: matches ? 1 : 0,
+        width: 400,
         editable: true,
       },
       {
         field: "createdAt",
         headerName: "CreatedAt",
-        width: 130,
-        flex: matches ? 1 : 0,
+        width: 300,
         valueFormatter: (params: GridValueFormatterParams<Date>) => {
           if (params.value == null) {
             return "";
@@ -119,8 +117,7 @@ const Category = () => {
       {
         field: "updatedAt",
         headerName: "UpdatedAt",
-        width: 130,
-        flex: matches ? 1 : 0,
+        width: 300,
         valueFormatter: (params: GridValueFormatterParams<Date>) => {
           if (params.value == null) {
             return "";
@@ -144,13 +141,7 @@ const Category = () => {
           }),
       },
     ];
-  }, [
-    matches,
-    handleEditClick,
-    handleSaveClick,
-    handleCancelClick,
-    rowModesModel,
-  ]);
+  }, [handleEditClick, handleSaveClick, handleCancelClick, rowModesModel]);
 
   const handleOpen = () => {
     setOpen(true);

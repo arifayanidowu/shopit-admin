@@ -86,18 +86,20 @@ const useProduct = () => {
         queryClient.invalidateQueries(["products"]);
         setImage(null);
         toast.update(toastId.current!, {
-          render: "Product updated successfully!",
-          type: "success",
-          ...toastOptions,
+          ...toastOptions({
+            render: "Product updated successfully!",
+            type: "success",
+          }),
         });
       },
       onError: (error) => {
         let err = error as Error;
         setImage(null);
         toast.update(toastId.current!, {
-          render: err.message,
-          type: "error",
-          ...toastOptions,
+          ...toastOptions({
+            render: err.message,
+            type: "error",
+          }),
         });
       },
     }
@@ -107,17 +109,19 @@ const useProduct = () => {
     onSuccess: () => {
       queryClient.invalidateQueries(["products"]);
       toast.update(toastId.current!, {
-        render: "Product deleted successfully!",
-        type: "success",
-        ...toastOptions,
+        ...toastOptions({
+          render: "Product deleted successfully!",
+          type: "success",
+        }),
       });
     },
     onError: (error) => {
       let err = error as Error;
       toast.update(toastId.current!, {
-        render: err.message,
-        type: "error",
-        ...toastOptions,
+        ...toastOptions({
+          render: err.message,
+          type: "error",
+        }),
       });
     },
   });

@@ -46,17 +46,19 @@ const Profile = () => {
     onSuccess: () => {
       queryClient.invalidateQueries(["profile"]);
       toast.update(toastId, {
-        render: "Profile updated successfully!",
-        type: "success",
-        ...toastOptions,
+        ...toastOptions({
+          render: "Profile updated successfully!",
+          type: "success",
+        }),
       });
     },
     onError: (error) => {
       const err = error as Error;
       toast.update(toastId as Id, {
-        render: err.message,
-        type: "error",
-        ...toastOptions,
+        ...toastOptions({
+          render: err.message,
+          type: "error",
+        }),
       });
     },
   });
@@ -78,13 +80,8 @@ const Profile = () => {
       if (file) {
         formData.append("avatar", file);
       }
+      toastId = toast.loading("Updating profile...");
       mutate(formData);
-      toastId = toast("Updating profile...", {
-        type: "info",
-        isLoading: true,
-        closeOnClick: false,
-        closeButton: false,
-      });
     })();
   };
 

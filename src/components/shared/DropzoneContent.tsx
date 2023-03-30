@@ -31,16 +31,7 @@ const DropzoneContent = ({
     []
   );
   return (
-    <Paper
-      square
-      sx={{
-        ...containerStyle,
-        borderStyle: isDragActive ? "dotted" : "solid",
-        borderWidth: 2,
-      }}
-      {...getRootProps()}
-      component="div"
-    >
+    <Paper square sx={containerStyle} {...getRootProps()} component="div">
       <input {...getInputProps()} />
       {isDragActive ? (
         <Box
