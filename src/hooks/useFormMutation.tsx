@@ -40,20 +40,22 @@ const useFormMutation = <T extends Record<string, any>>({
     onSuccess: () => {
       queryClient.invalidateQueries(queryKeys);
       toast.update(toastId.current!, {
-        render: successMessage,
-        type: "success",
-        ...toastOptions,
+        ...toastOptions({
+          render: successMessage,
+          type: "success",
+        }),
       });
       if (navigate) {
         navigate(path!);
       }
     },
     onError: (error) => {
-      let err = error as Error;
+      const err = error as Error;
       toast.update(toastId.current!, {
-        render: err.message,
-        type: "error",
-        ...toastOptions,
+        ...toastOptions({
+          render: err.message,
+          type: "error",
+        }),
       });
     },
   });

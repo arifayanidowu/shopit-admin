@@ -1,4 +1,6 @@
-import { Grid, Typography } from "@mui/material";
+import { faPlus, IconDefinition } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Button, CircularProgress, Grid, Typography } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
 import { useLocation } from "react-router-dom";
@@ -10,7 +12,10 @@ interface AnimateContainerProps {
   title?: string;
   salutation?: string;
   subtitle?: string;
-  ActionButton?: React.ReactNode;
+  btnTitle?: string | React.ReactNode;
+  btnIcon?: IconDefinition;
+  onClick?: () => void;
+  isLoading?: boolean;
 }
 
 const AnimateContainer = ({
@@ -18,7 +23,10 @@ const AnimateContainer = ({
   title,
   salutation,
   subtitle,
-  ActionButton,
+  btnTitle,
+  btnIcon,
+  onClick,
+  isLoading,
 }: AnimateContainerProps) => {
   const { adminData } = useStore();
   const location = useLocation();
@@ -58,6 +66,7 @@ const AnimateContainer = ({
         exit="exit"
         style={{
           overflow: "hidden",
+          width: "100%",
         }}
         key={location.pathname}
       >
@@ -80,7 +89,29 @@ const AnimateContainer = ({
               </Typography>
             </Grid>
             <Grid item>
-              {adminActions(adminData, "Create") ? ActionButton : null}
+              {adminActions(adminData, "Create") ? (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={
+                    isLoading ? (
+                      <CircularProgress size={14} color="inherit" />
+                    ) : (
+                      <FontAwesomeIcon
+                        icon={btnIcon ?? faPlus}
+                        style={{
+                          fontSize: "1rem",
+                        }}
+                        aria-hidden="true"
+                        opacity={0.5}
+                      />
+                    )
+                  }
+                  onClick={onClick}
+                >
+                  {btnTitle ?? "Add"}
+                </Button>
+              ) : null}
             </Grid>
           </Grid>
           {children}

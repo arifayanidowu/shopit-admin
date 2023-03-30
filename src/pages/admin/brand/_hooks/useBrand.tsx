@@ -48,7 +48,7 @@ const useBrand = () => {
       });
     },
     onError: (error) => {
-      let err = error as Error;
+      const err = error as Error;
       toast.update(toastId.current!, {
         ...toastOptions({
           render: err.message,
@@ -73,7 +73,7 @@ const useBrand = () => {
       }, 2000);
     },
     onError: (error) => {
-      let err = error as Error;
+      const err = error as Error;
       toast.update(toastId.current!, {
         ...toastOptions({
           render: err.message,

@@ -1,5 +1,5 @@
-import { Button } from "@mui/material";
 import { GridToolbar } from "@mui/x-data-grid";
+
 import CustomTable from "src/components/CustomTable";
 import PageLoader from "src/components/PageLoader";
 import AnimateContainer from "src/components/shared/AnimateContainer";
@@ -35,11 +35,8 @@ const Products = () => {
     <AnimateContainer
       title="Products"
       subtitle="List of Products"
-      ActionButton={
-        <Button variant="contained" color="primary" onClick={handleOpen}>
-          Add Product
-        </Button>
-      }
+      btnTitle="Add Product"
+      onClick={handleOpen}
     >
       <AddProductModal {...{ open, handleClose }} />
       <ConfirmDialog

@@ -1,7 +1,4 @@
 import { useMemo, useRef, useState } from "react";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button } from "@mui/material";
 import { GridValueFormatterParams } from "@mui/x-data-grid";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
@@ -59,7 +56,7 @@ const Category = () => {
       });
     },
     onError: (error) => {
-      let err = error as Error;
+      const err = error as Error;
       toast.update(toastId.current!, {
         ...toastOptions({
           render: err.message,
@@ -80,7 +77,7 @@ const Category = () => {
       });
     },
     onError: (error) => {
-      let err = error as Error;
+      const err = error as Error;
       toast.update(toastId.current!, {
         ...toastOptions({
           render: err.message,
@@ -179,25 +176,8 @@ const Category = () => {
     <AnimateContainer
       title="Category"
       subtitle="List of Categories"
-      ActionButton={
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={
-            <FontAwesomeIcon
-              icon={faPlus}
-              style={{
-                fontSize: "1rem",
-              }}
-              aria-hidden="true"
-              opacity={0.5}
-            />
-          }
-          onClick={handleOpen}
-        >
-          Add Category
-        </Button>
-      }
+      btnTitle="Add Category"
+      onClick={handleOpen}
     >
       <CreateCategoryModal open={open} handleClose={handleClose} />
       <ConfirmDialog

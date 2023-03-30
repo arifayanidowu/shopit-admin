@@ -1,13 +1,6 @@
-import { Check, Delete } from "@mui/icons-material";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Grid,
-  Paper,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { Delete } from "@mui/icons-material";
+import { Box, Button, Grid, Paper, TextField, Typography } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
@@ -88,28 +81,19 @@ const Profile = () => {
   return (
     <AnimateContainer
       subtitle={toCapitalize(adminData?.username) ?? adminData?.name}
-      ActionButton={
-        <Button
-          variant="contained"
-          startIcon={
-            isLoading ? (
-              <CircularProgress size={14} color="inherit" />
-            ) : (
-              <Check />
-            )
-          }
-          onClick={onSave}
-        >
-          {isLoading ? (
-            <>
-              Processing
-              <EllipsisAnim />
-            </>
-          ) : (
-            "Save"
-          )}
-        </Button>
+      btnTitle={
+        isLoading ? (
+          <>
+            Processing
+            <EllipsisAnim />
+          </>
+        ) : (
+          "Save"
+        )
       }
+      onClick={onSave}
+      btnIcon={faCheck}
+      isLoading={isLoading}
     >
       <Box>
         <Grid container spacing={1}>

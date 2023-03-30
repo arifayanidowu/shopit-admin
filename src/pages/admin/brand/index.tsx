@@ -1,6 +1,4 @@
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
 
 import CustomTable from "src/components/CustomTable";
 import PageLoader from "src/components/PageLoader";
@@ -37,25 +35,8 @@ const Brand = () => {
     <AnimateContainer
       title="Brands"
       subtitle="List of Brands"
-      ActionButton={
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={
-            <FontAwesomeIcon
-              icon={faPlus}
-              style={{
-                fontSize: "1rem",
-              }}
-              aria-hidden="true"
-              opacity={0.5}
-            />
-          }
-          onClick={handleOpen}
-        >
-          Add Brand
-        </Button>
-      }
+      btnTitle="Add Brand"
+      onClick={handleOpen}
     >
       <AddBrandModal {...{ open, handleClose }} />
       <ConfirmDialog

@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { Controller } from "react-hook-form";
+
 import DropzoneContent from "src/components/shared/DropzoneContent";
 import EllipsisAnim from "src/components/shared/EllipsisAnim";
 import { getAllBrands } from "src/endpoints/brands";

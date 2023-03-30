@@ -74,7 +74,7 @@ const useProduct = () => {
   } = useFileHandler();
   const brandQuery = useQuery<Brand[]>(["brands"], getAllBrands);
   const categoryQuery = useQuery<Category[]>(["category"], getCategories);
-  const { data, isLoading } = useQuery(["products"], getProducts);
+  const { data, isLoading } = useQuery<IProduct[]>(["products"], getProducts);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [updatedProductId, setUpdatedProductId] = useState<string | null>(null);
   const [currentImage, setCurrentImage] = useState<string | null>(null);
@@ -93,7 +93,7 @@ const useProduct = () => {
         });
       },
       onError: (error) => {
-        let err = error as Error;
+        const err = error as Error;
         setImage(null);
         toast.update(toastId.current!, {
           ...toastOptions({
@@ -116,7 +116,7 @@ const useProduct = () => {
       });
     },
     onError: (error) => {
-      let err = error as Error;
+      const err = error as Error;
       toast.update(toastId.current!, {
         ...toastOptions({
           render: err.message,
